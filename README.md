@@ -42,7 +42,7 @@ Intro intro = Intro(
   ),
 );
 ```
-<img src='https://raw.githubusercontent.com/tal-tech/flutter_intro/master/doc/img1.png' width='300' />
+<img src='https://raw.githubusercontent.com/tal-tech/flutter_intro/master/doc/img1.png' width='500' />
 
 ### 给需要加引导的 Widget 绑定 globalKey
 
