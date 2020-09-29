@@ -40,11 +40,13 @@ class _MyHomePageState extends State<MyHomePage> {
       /// use defaultTheme, or you can implement widgetBuilder function yourself
       widgetBuilder: StepWidgetBuilder.useDefaultTheme(
         texts: [
-          '你好呀，我是 Flutter Intro。',
-          '我可以帮你在 Flutter 项目中快读实现 Step By Step 引导。',
-          '我的用法也十分简单，你可以通过 example 和 api 文档快速掌握和使用。',
-          '为了快速实现引导，我也默认提供了一套样式，开箱即用，祝大家使用愉快，再见！',
+          'Hello, I\'m Flutter Intro.',
+          'I can help you quickly implement the Step By Step guide in the Flutter project.',
+          'My usage is also very simple, you can quickly learn and use it through example and api documentation.',
+          'In order to quickly implement the guidance, I also provide a set of out-of-the-box themes, I wish you all a happy use, goodbye!',
         ],
+        btnLabel: 'I KNOW',
+        showStepLabel: true,
       ),
     );
   }

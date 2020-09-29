@@ -2,115 +2,110 @@
 
 [![pub package](https://img.shields.io/pub/v/flutter_intro.svg)](https://pub.dartlang.org/packages/flutter_intro)
 
-[中文文档](https://raw.githubusercontent.com/tal-tech/flutter_intro/master/README-ZH.md)
-
-A better way for new feature introduction and step-by-step users guide for your Flutter project.
+这是一个在你的 Flutter 项目加入 Step By Step 用户引导的绝佳方案。
 
 <img src='https://raw.githubusercontent.com/tal-tech/flutter_intro/master/doc/example1.gif' width='300' />
 
-## Usage
+## 使用方法
 
-To use this package, add `flutter_intro` as a [dependency in your pubspec.yaml file](https://flutter.dev/docs/development/packages-and-plugins/using-packages).
+将 `flutter_intro` 加入到依赖文件 [pubspec.yaml](https://flutter.dev/docs/development/packages-and-plugins/using-packages) 中。
 
-### Init
+### 初始化
 
 ```dart
 import 'package:flutter_intro/flutter_intro.dart';
 
 Intro intro = Intro(
-  /// The total number of guide pages, must be passed
+  /// 总共的引导页数量，必传
   stepCount: 4,
 
-  /// The padding of the highlighted area and the widget
+  /// 高亮区域与 widget 的内边距
   padding: EdgeInsets.all(8),
 
-  /// Border radius of the highlighted area
+  /// 高亮区域的圆角半径
   borderRadius: BorderRadius.all(Radius.circular(4)),
 
-  /// Use the default useDefaultTheme provided by the library to quickly build a guide page
-  /// Need to customize the style and content of the guide page, implement the widgetBuilder method yourself
+  /// 使用库默认提供的 useDefaultTheme 可以快速构建引导页
+  /// 需要自定义引导页样式和内容，需要自己实现 widgetBuilder 方法
   widgetBuilder: StepWidgetBuilder.useDefaultTheme(
-    /// Prompt text
+    /// 提示文本
     texts: [
-      'Hello, I\'m Flutter Intro.',
-      'I can help you quickly implement the Step By Step guide in the Flutter project.',
-      'My usage is also very simple, you can quickly learn and use it through example and api documentation.',
-      'In order to quickly implement the guidance, I also provide a set of out-of-the-box themes, I wish you all a happy use, goodbye!',
+      '你好呀，我是 Flutter Intro。',
+      '我可以帮你在 Flutter 项目中快速实现 Step By Step 引导。',
+      '我的用法也十分简单，你可以通过 example 和 api 文档快速掌握和使用。',
+      '为了快速实现引导，我也默认提供了一套样式，开箱即用，祝大家使用愉快，再见！',
     ],
-    /// Button label
-    btnLabel: 'I KNOW',
-    /// Whether to display the current step after the button
+    /// 按钮文字
+    btnLabel: '我知道了',
+    /// 是否在按钮后显示当前步骤
     showStepLabel: true,
   ),
 );
 ```
 <img src='https://raw.githubusercontent.com/tal-tech/flutter_intro/master/doc/img1.png' width='500' />
 
-### Bind globalKey to widgets that need to be guided
+### 给需要加引导的 Widget 绑定 globalKey
 
-The `intro` object in the first step contains the `keys` property, and `keys` is a `globalKey` array of length `stepCount`. Just bind the `globalKey` in the array to the corresponding component.
+第一步里面的 `intro` 对象中包含 `keys` 属性，`keys` 为一个长度为 `stepCount` 的 `globalKey` 数组，将数组中的 `globalKey` 绑定到对应组件上即可。
 
 ```dart
 Placeholder(
-  /// The first guide page is the first item in the binding keys
+  /// 第一个引导页即绑定 keys 中的第一项
   key: intro.keys[0]
 )
 ```
 
-### Run
+### 启动
 
-That's it!
+大功告成！
 
 ```dart
 intro.start(context);
 ```
 
-## Custom widgetBuilder method
+## 自定义 widgetBuilder 方法
 
-If you need to completely customize the style and content of the guide page, you need to implement the `widgetBuilder` method yourself.
+如果你需要完全自定义引导页样式和内容，需要自己实现 `widgetBuilder` 方法。
 
 ```dart
 final Widget Function(StepWidgetParams params) widgetBuilder;
 ```
 
-This method will be called internally by `flutter_intro` when the intro page appears, 
-and will pass some data on the current page in the form of parameters `StepWidgetParams`, 
-and finally render the component returned by this method on the screen.
+该方法会在引导页出现时由 `flutter_intro` 内部调用，并会将当前页面上的一些数据通过参数的形式 `StepWidgetParams` 传进来，最终渲染在屏幕上的为此方法返回的组件。
 
 ```dart
 class StepWidgetParams {
-  /// Return to the previous guide page method, or null if there is none
+  /// 返回前一个引导页方法，如果没有，则为 null
   final VoidCallback onPrev;
 
-  /// Enter the next guide page method, or null if there is no
+  /// 进入下一个引导页方法，如果没有，则为 null
   final VoidCallback onNext;
 
-  /// End all guide page methods
+  /// 结束所有引导页方法
   final VoidCallback onFinish;
 
-  /// Which guide page is currently displayed, starting from 0
+  /// 当前执行到第几个引导页，从 0 开始
   final int currentStepIndex;
 
-  /// Total number of guide pages
+  /// 引导页的总数
   final int stepCount;
 
-  /// The width and height of the screen
+  /// 屏幕的宽高
   final Size screenSize;
 
-  /// The width and height of the highlighted component
+  /// 高亮组件的的宽高
   final Size size;
 
-  /// The coordinates of the upper left corner of the highlighted component
+  /// 高亮组件左上角坐标
   final Offset offset;
 }
 ```
 
 <img src='https://raw.githubusercontent.com/tal-tech/flutter_intro/master/doc/img2.png' width='300' />
 
-`StepWidgetParams` provides all the parameters needed to generate the guide page. 
-The theme provided by default is also based on this parameter to generate the guide page.
+`StepWidgetParams` 提供了生成引导页所需要的所有参数，默认提供的主题也是基于此参数生成引导页。
 
-## Example
+## 示例
 
 ```dart
 class _MyHomePageState extends State<MyHomePage> {
