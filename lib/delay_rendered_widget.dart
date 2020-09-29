@@ -2,20 +2,20 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-/// 延迟渲染类，用来实现 [Intro] 的动画效果，
-/// 为内部使用类，开发者无需关心
+/// Delayed rendering class, used to achieve [Intro] animation effect
+/// For internal use of classes, developers don’t need to care
 ///
 class DelayRenderedWidget extends StatefulWidget {
-  /// 需要渐显渐隐的子元素
+  /// Sub-elements that need to fade in and out
   final Widget child;
 
-  /// [child] 是否持续渲染，即动画只会有一次
+  /// [child] Whether to continue rendering, that is, the animation will only be once
   final bool childPersist;
 
-  /// 动画持续时间
+  /// Animation duration
   final Duration duration;
 
-  /// [child] 是否需要移除（隐藏）
+  /// [child] need to be removed (hidden)
   final bool removed;
 
   const DelayRenderedWidget({
@@ -34,13 +34,13 @@ class _DelayRenderedWidgetState extends State<DelayRenderedWidget> {
   Widget child;
   Timer timer;
 
-  /// 动画之间的时间间隔
-  final Duration durationSpace = Duration(milliseconds: 100);
+  /// Time interval between animations
+  final Duration durationInterval = Duration(milliseconds: 100);
   @override
   void initState() {
     super.initState();
     child = widget.child;
-    timer = Timer(durationSpace, () {
+    timer = Timer(durationInterval, () {
       if (mounted) {
         setState(() {
           opacity = 1;
@@ -77,7 +77,7 @@ class _DelayRenderedWidgetState extends State<DelayRenderedWidget> {
         Timer(
           Duration(
             milliseconds:
-                duration.inMilliseconds + durationSpace.inMilliseconds,
+                duration.inMilliseconds + durationInterval.inMilliseconds,
           ),
           () {
             setState(() {

@@ -1,30 +1,30 @@
 import 'package:flutter/material.dart';
 
-/// 生成引导页时系统调用 [IntroStep.widgetBuilder] 时传入的数据
+/// The data passed in when the system calls [IntroStep.widgetBuilder] when the guide page is generated
 ///
 class StepWidgetParams {
-  /// 返回前一个引导页方法，如果没有，则为 null
+  /// Return to the previous guide page method, or null if there is none
   final VoidCallback onPrev;
 
-  /// 进入下一个引导页方法，如果没有，则为 null
+  /// Enter the next guide page method, or null if there is no
   final VoidCallback onNext;
 
-  /// 结束所有引导页方法
+  /// End all guide page methods
   final VoidCallback onFinish;
 
-  /// 当前执行到第几个引导页，从 0 开始
+  /// Which guide page is currently displayed, starting from 0
   final int currentStepIndex;
 
-  /// 引导页的总数
+  /// Total number of guide pages
   final int stepCount;
 
-  /// 屏幕的宽高
+  /// The width and height of the screen
   final Size screenSize;
 
-  /// 高亮组件的的宽高
+  /// The width and height of the highlighted component
   final Size size;
 
-  /// 当前被添加引导页的 [Widget] 的左上角的坐标
+  /// The coordinates of the upper left corner of the highlighted component
   final Offset offset;
 
   StepWidgetParams({

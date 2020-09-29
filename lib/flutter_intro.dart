@@ -9,11 +9,11 @@ import 'package:flutter_intro/step_widget_params.dart';
 export 'package:flutter_intro/step_widget_builder.dart';
 export 'package:flutter_intro/step_widget_params.dart';
 
-/// Flutter Intro 主类
+/// Flutter Intro main class
 ///
-/// 实例化 [Intro] 对象时传入 [stepCount]，和 [widgetBuilder]
-/// 从 [Intro.keys] 获取 [GlobalKey]，加入到需要添加引导页的 [Widget] 上
-/// 最后执行 [start] 方法，参数为当前的 [BuildContext]，即可
+/// Pass in [stepCount] when instantiating [Intro] object, and [widgetBuilder]
+/// Obtain [GlobalKey] from [Intro.keys] and add it to the [Widget] where you need to add a guide page
+/// Finally execute the [start] method, the parameter is the current [BuildContext], you can
 ///
 /// {@tool snippet}
 /// ```dart
@@ -46,21 +46,22 @@ class Intro {
   final Color _maskColor = Colors.black.withOpacity(.6);
   final Duration _animationDuration = Duration(milliseconds: 300);
 
-  /// 引导页内容生成方法，该方法会在引导页出现时由 [Intro] 内部调用，
-  /// 并会将当前页面上的一些参数通过 [StepWidgetParams] 传进来
+  /// The method of generating the content of the guide page,
+  /// which will be called internally by [Intro] when the guide page appears
+  /// And will pass in some parameters on the current page through [StepWidgetParams]
   final Widget Function(StepWidgetParams params) widgetBuilder;
 
-  /// [Widget] 选中区域的 [padding]，默认为 [EdgeInsets.all(8)]
+  /// [Widget] [padding] of the selected area, the default is [EdgeInsets.all(8)]
   final EdgeInsets padding;
 
-  /// [Widget] 选中区域的 [borderRadius]，默认为 [BorderRadius.all(Radius.circular(4))]
+  /// [Widget] [borderRadius] of the selected area, the default is [BorderRadius.all(Radius.circular(4))]
   final BorderRadiusGeometry borderRadius;
 
-  /// 总共有多少步
+  /// How many steps are there in total
   final int stepCount;
 
-  /// 创建一个 Intro 实例，参数 [stepCount] 为引导页数量
-  /// [widgetBuilder] 为引导页生成方法，返回一个 [Widget] 作为引导页
+  /// Create an Intro instance, the parameter [stepCount] is the number of guide pages
+  /// [widgetBuilder] is the method of generating the guide page, and returns a [Widget] as the guide page
   Intro({
     @required this.widgetBuilder,
     @required this.stepCount,
@@ -208,9 +209,9 @@ class Intro {
     ));
   }
 
-  /// 触发引导操作开始方法
+  /// Trigger the start method of the guided operation
   ///
-  /// [context] 当前环境 [BuildContext]
+  /// [context] Current environment [BuildContext]
   void start(BuildContext context) {
     _removed = false;
     _currentStepIndex = 0;

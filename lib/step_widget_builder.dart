@@ -3,9 +3,9 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_intro/step_widget_params.dart';
 
-/// Flutter Intro 自带的 [WidgetBuilder] 类
+/// The [WidgetBuilder] class that comes with Flutter Intro
 ///
-/// 可以使用 Flutter Intro 提供的 defaultTheme
+/// You can use the defaultTheme provided by Flutter Intro
 ///
 /// {@tool snippet}
 /// ```dart
@@ -48,7 +48,7 @@ class StepWidgetBuilder {
     }
     position['width'] = screenWidth * 0.618;
 
-    /// 右侧距离很大，放在右侧视觉上更美观
+    /// The distance on the right side is very large, it is more beautiful on the right side
     if (rightArea > 0.8 * topArea && rightArea > 0.8 * bottomArea) {
       position['left'] = offset.dx + width + 16;
       position['top'] = offset.dy - 4;
@@ -57,7 +57,7 @@ class StepWidgetBuilder {
       position['width'] = min<double>(position['width'], rightArea * 0.8);
     }
 
-    /// 左侧距离很大，放在左侧视觉上更美观
+    /// The distance on the left is large, it is more beautiful on the left side
     if (leftArea > 0.8 * topArea && leftArea > 0.8 * bottomArea) {
       position['right'] = rightArea + width + 16;
       position['top'] = offset.dy - 4;
@@ -69,13 +69,13 @@ class StepWidgetBuilder {
     return position;
   }
 
-  /// 使用默认主题
-  /// [texts] 文字提示列表，每一项为对应的引导页需要显示的文字
-  /// [btnLabel] 下一步按钮中的文字，默认值为"我知道了"
-  /// [showStepLabel] 是否在按钮后面显示步数指示器，默认显示
+  /// Use default theme
+  /// [texts] Text prompt list, each item is the text that needs to be displayed on the corresponding guide page
+  /// [btnLabel] The text in the next button, the default value is "I KNOW"
+  /// [showStepLabel] Whether to display the step indicator behind the button, the default display
   static Widget Function(StepWidgetParams params) useDefaultTheme({
     @required List<String> texts,
-    String btnLabel = '我知道了',
+    String btnLabel = 'I KNOW',
     bool showStepLabel = true,
   }) {
     return (StepWidgetParams stepWidgetParams) {

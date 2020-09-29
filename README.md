@@ -2,7 +2,7 @@
 
 [![pub package](https://img.shields.io/pub/v/flutter_intro.svg)](https://pub.dartlang.org/packages/flutter_intro)
 
-[中文文档](https://raw.githubusercontent.com/tal-tech/flutter_intro/master/README-ZH.md)
+[中文文档](https://github.com/tal-tech/flutter_intro/blob/master/README-ZH.md)
 
 A better way for new feature introduction and step-by-step users guide for your Flutter project.
 
