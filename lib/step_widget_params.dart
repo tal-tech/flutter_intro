@@ -1,5 +1,15 @@
 import 'package:flutter/material.dart';
 
+/// Highlight component parameters
+///
+class WidgetParams {
+  /// Padding of highlighted area
+  EdgeInsets padding;
+
+  /// Border radius of the highlighted area
+  BorderRadiusGeometry borderRadius;
+}
+
 /// The data passed in when the system calls [IntroStep.widgetBuilder] when the guide page is generated
 ///
 class StepWidgetParams {

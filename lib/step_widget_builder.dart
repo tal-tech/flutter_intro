@@ -41,10 +41,10 @@ class StepWidgetBuilder {
       position['top'] = offset.dy + height + 12;
     }
     if (leftArea > rightArea) {
-      position['right'] = rightArea;
+      position['right'] = rightArea <= 0 ? 16.0 : rightArea;
       position['crossAxisAlignment'] = CrossAxisAlignment.end;
     } else {
-      position['left'] = offset.dx;
+      position['left'] = offset.dx <= 0 ? 16.0 : offset.dx;
     }
     position['width'] = screenWidth * 0.618;
 

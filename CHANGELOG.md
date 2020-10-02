@@ -1,3 +1,8 @@
+## [0.4.0]
+
+* Fix the problem that the prompt text will exceed the screen boundary
+* Added setStepConfig and setStepsConfig methods to set step settings
+
 ## [0.3.4]
 
 * Improve Readme & API

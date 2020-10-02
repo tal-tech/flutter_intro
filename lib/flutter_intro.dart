@@ -42,6 +42,7 @@ class Intro {
   OverlayEntry _overlayEntry;
   int _currentStepIndex = 0;
   Widget _stepWidget;
+  List<Map> _configMap = [];
   List<GlobalKey> _globalKeys = [];
   final Color _maskColor = Colors.black.withOpacity(.6);
   final Duration _animationDuration = Duration(milliseconds: 300);
@@ -70,18 +71,54 @@ class Intro {
   }) : assert(stepCount > 0) {
     for (int i = 0; i < stepCount; i++) {
       _globalKeys.add(GlobalKey());
+      _configMap.add({});
     }
   }
 
   List<GlobalKey> get keys => _globalKeys;
 
+  /// Set the configuration of the specified number of steps
+  void setStepConfig(
+    int stepIndex, {
+    EdgeInsets padding,
+    BorderRadiusGeometry borderRadius,
+  }) {
+    assert(stepIndex >= 0 && stepIndex < stepCount);
+    _configMap[stepIndex] = {
+      'padding': padding,
+      'borderRadius': borderRadius,
+    };
+  }
+
+  /// Set the configuration of multiple steps
+  void setStepsConfig(
+    List<int> stepsIndex, {
+    EdgeInsets padding,
+    BorderRadiusGeometry borderRadius,
+  }) {
+    assert(stepsIndex
+        .every((stepIndex) => stepIndex >= 0 && stepIndex < stepCount));
+    stepsIndex.forEach((index) {
+      setStepConfig(
+        index,
+        padding: padding,
+        borderRadius: borderRadius,
+      );
+    });
+  }
+
   void _getWidgetInfo(GlobalKey globalKey) {
+    EdgeInsets currentConfig = _configMap[_currentStepIndex]['padding'];
     RenderBox renderBox = globalKey.currentContext.findRenderObject();
-    _widgetWidth = renderBox.size.width + padding.horizontal;
-    _widgetHeight = renderBox.size.height + padding.vertical;
+    _widgetWidth = renderBox.size.width +
+        (currentConfig?.horizontal ?? padding.horizontal);
+    _widgetHeight =
+        renderBox.size.height + (currentConfig?.vertical ?? padding.vertical);
     _widgetOffset = Offset(
-      renderBox.localToGlobal(Offset.zero).dx - padding.left,
-      renderBox.localToGlobal(Offset.zero).dy - padding.top,
+      renderBox.localToGlobal(Offset.zero).dx -
+          (currentConfig?.left ?? padding.left),
+      renderBox.localToGlobal(Offset.zero).dy -
+          (currentConfig?.top ?? padding.top),
     );
   }
 
@@ -91,6 +128,7 @@ class Intro {
     BlendMode backgroundBlendMode,
     @required double left,
     @required double top,
+    BorderRadiusGeometry borderRadiusGeometry,
     Widget child,
   }) {
     return AnimatedPositioned(
@@ -100,7 +138,7 @@ class Intro {
         decoration: BoxDecoration(
           color: Colors.white,
           backgroundBlendMode: backgroundBlendMode,
-          borderRadius: borderRadius,
+          borderRadius: borderRadiusGeometry,
         ),
         width: width,
         height: height,
@@ -146,6 +184,9 @@ class Intro {
                         height: _widgetHeight,
                         left: _widgetOffset.dx,
                         top: _widgetOffset.dy,
+                        borderRadiusGeometry: _configMap[_currentStepIndex]
+                                ['borderRadius'] ??
+                            borderRadius,
                       ),
                     ],
                   ),

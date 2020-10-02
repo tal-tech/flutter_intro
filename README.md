@@ -110,6 +110,65 @@ class StepWidgetParams {
 `StepWidgetParams` provides all the parameters needed to generate the guide page. 
 The theme provided by default is also based on this parameter to generate the guide page.
 
+## Q&A
+
+Q1. What if the highlighted area is not displayed completely?
+
+<img src='https://raw.githubusercontent.com/tal-tech/flutter_intro/master/doc/img3.jpg' width='300' />
+
+A1. That's because Intro provides 8px padding by default.
+
+<img src='https://raw.githubusercontent.com/tal-tech/flutter_intro/master/doc/img4.jpg' width='300' />
+
+We can change it by setting the value of padding.
+
+```dart
+intro = Intro(
+  ...,
+  /// Set it to zero
+  padding: EdgeInsets.zero,
+);
+```
+<img src='https://raw.githubusercontent.com/tal-tech/flutter_intro/master/doc/img5.jpg' width='300' />
+
+Q2. Can I set different configurations for each step?
+
+A2. Above version `0.4.x`, you can set single or multiple step settings(padding & borderRadius) through setStepConfig and setStepsConfig.
+
+```dart
+intro.setStepConfig(
+  1,
+  padding: EdgeInsets.symmetric(
+    vertical: -5,
+    horizontal: -8,
+  ),
+);
+intro.setStepsConfig(
+  [0, 1],
+  borderRadius: BorderRadius.all(
+    Radius.circular(
+      16,
+    ),
+  ),
+);
+```
+
+Q3. Can I make the highlight area smaller?
+
+A3. You can do it by setting padding to a negative number.
+
+```dart
+intro.setStepConfig(
+  1,
+  padding: EdgeInsets.symmetric(
+    vertical: -10,
+    horizontal: -8,
+  ),
+);
+```
+
+<img src='https://raw.githubusercontent.com/tal-tech/flutter_intro/master/doc/img6.jpg' width='300' />
+
 ## Example
 
 ```dart
