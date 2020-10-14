@@ -1,3 +1,7 @@
+## [0.4.1]
+
+* Fix style issues that may occur in some cases
+
 ## [0.4.0]
 
 * Fix the problem that the prompt text will exceed the screen boundary

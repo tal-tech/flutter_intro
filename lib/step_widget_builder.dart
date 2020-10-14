@@ -43,10 +43,11 @@ class StepWidgetBuilder {
     if (leftArea > rightArea) {
       position['right'] = rightArea <= 0 ? 16.0 : rightArea;
       position['crossAxisAlignment'] = CrossAxisAlignment.end;
+      position['width'] = min(leftArea + width - 16, screenWidth * 0.618);
     } else {
       position['left'] = offset.dx <= 0 ? 16.0 : offset.dx;
+      position['width'] = min(rightArea + width - 16, screenWidth * 0.618);
     }
-    position['width'] = screenWidth * 0.618;
 
     /// The distance on the right side is very large, it is more beautiful on the right side
     if (rightArea > 0.8 * topArea && rightArea > 0.8 * bottomArea) {
@@ -134,7 +135,7 @@ class StepWidgetBuilder {
                       child: Text(
                         '$btnLabel' +
                             (showStepLabel
-                                ? '${currentStepIndex + 1}/$stepCount'
+                                ? ' ${currentStepIndex + 1}/$stepCount'
                                 : ''),
                         style: TextStyle(
                           fontSize: 12,
