@@ -1,11 +1,9 @@
-import 'dart:async';
-
-import 'package:flutter/material.dart';
+part of flutter_intro;
 
 /// Delayed rendering class, used to achieve [Intro] animation effect
 /// For internal use of classes, developers don’t need to care
 ///
-class DelayRenderedWidget extends StatefulWidget {
+class _DelayRenderedWidget extends StatefulWidget {
   /// Sub-elements that need to fade in and out
   final Widget child;
 
@@ -18,7 +16,7 @@ class DelayRenderedWidget extends StatefulWidget {
   /// [child] need to be removed (hidden)
   final bool removed;
 
-  const DelayRenderedWidget({
+  const _DelayRenderedWidget({
     Key key,
     this.removed = false,
     this.duration = const Duration(milliseconds: 200),
@@ -29,7 +27,7 @@ class DelayRenderedWidget extends StatefulWidget {
   _DelayRenderedWidgetState createState() => _DelayRenderedWidgetState();
 }
 
-class _DelayRenderedWidgetState extends State<DelayRenderedWidget> {
+class _DelayRenderedWidgetState extends State<_DelayRenderedWidget> {
   double opacity = 0;
   Widget child;
   Timer timer;
@@ -56,7 +54,7 @@ class _DelayRenderedWidgetState extends State<DelayRenderedWidget> {
   }
 
   @override
-  void didUpdateWidget(DelayRenderedWidget oldWidget) {
+  void didUpdateWidget(_DelayRenderedWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
     var duration = widget.duration;
     if (widget.removed) {

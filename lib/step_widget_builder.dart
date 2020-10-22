@@ -1,7 +1,4 @@
-import 'dart:math';
-
-import 'package:flutter/material.dart';
-import 'package:flutter_intro/step_widget_params.dart';
+part of flutter_intro;
 
 /// The [WidgetBuilder] class that comes with Flutter Intro
 ///

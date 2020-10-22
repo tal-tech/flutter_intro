@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+part of flutter_intro;
 
 /// Highlight component parameters
 ///

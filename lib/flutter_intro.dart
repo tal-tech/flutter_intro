@@ -1,13 +1,13 @@
 library flutter_intro;
 
 import 'dart:async';
+import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_intro/delay_rendered_widget.dart';
-import 'package:flutter_intro/step_widget_params.dart';
 
-export 'package:flutter_intro/step_widget_builder.dart';
-export 'package:flutter_intro/step_widget_params.dart';
+part 'delay_rendered_widget.dart';
+part 'step_widget_builder.dart';
+part 'step_widget_params.dart';
 
 /// Flutter Intro main class
 ///
@@ -157,7 +157,7 @@ class Intro {
     Size screenSize = MediaQuery.of(context).size;
     _overlayEntry = new OverlayEntry(
       builder: (BuildContext context) {
-        return DelayRenderedWidget(
+        return _DelayRenderedWidget(
           removed: _removed,
           childPersist: true,
           duration: _animationDuration,
@@ -191,7 +191,7 @@ class Intro {
                     ],
                   ),
                 ),
-                DelayRenderedWidget(
+                _DelayRenderedWidget(
                   child: _stepWidget,
                 ),
               ],
