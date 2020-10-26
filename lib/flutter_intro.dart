@@ -220,10 +220,12 @@ class Intro {
   }
 
   void _onFinish() {
+    if (_overlayEntry == null) return;
     _removed = true;
     _overlayEntry.markNeedsBuild();
     Timer(_animationDuration, () {
       _overlayEntry.remove();
+      _overlayEntry = null;
     });
   }
 
