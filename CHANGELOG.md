@@ -1,3 +1,7 @@
+## [0.5.1]
+
+* Fix bug
+
 ## [0.5.0]
 
 * Add dispose method to destroy the guide page
