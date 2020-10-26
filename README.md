@@ -164,8 +164,11 @@ intro.setStepConfig(
   ),
 );
 ```
-
 <img src='https://raw.githubusercontent.com/tal-tech/flutter_intro/master/doc/img6.jpg' width='300' />
+
+Q4. Can I destroy the guide page manually?
+
+A4. Above version `0.5.x`, you can call the dispose method of the intro instance.
 
 ## Example
 

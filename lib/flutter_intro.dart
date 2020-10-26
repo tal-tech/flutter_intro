@@ -219,6 +219,14 @@ class Intro {
     }
   }
 
+  void _onFinish() {
+    _removed = true;
+    _overlayEntry.markNeedsBuild();
+    Timer(_animationDuration, () {
+      _overlayEntry.remove();
+    });
+  }
+
   void _createStepWidget(BuildContext context) {
     _getWidgetInfo(_globalKeys[_currentStepIndex]);
     Size screenSize = MediaQuery.of(context).size;
@@ -240,13 +248,7 @@ class Intro {
       offset: _widgetOffset,
       currentStepIndex: _currentStepIndex,
       stepCount: stepCount,
-      onFinish: () {
-        _removed = true;
-        _overlayEntry.markNeedsBuild();
-        Timer(_animationDuration, () {
-          _overlayEntry.remove();
-        });
-      },
+      onFinish: _onFinish,
     ));
   }
 
@@ -261,5 +263,10 @@ class Intro {
       context,
       _globalKeys[_currentStepIndex],
     );
+  }
+
+  /// Destroy the guide page and release all resources
+  void dispose() {
+    _onFinish();
   }
 }
