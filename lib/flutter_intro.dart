@@ -47,6 +47,9 @@ class Intro {
   final Color _maskColor = Colors.black.withOpacity(.6);
   final Duration _animationDuration = Duration(milliseconds: 300);
 
+  /// get current step page index
+  int get currentStepIndex => _currentStepIndex;
+
   /// The method of generating the content of the guide page,
   /// which will be called internally by [Intro] when the guide page appears
   /// And will pass in some parameters on the current page through [StepWidgetParams]
