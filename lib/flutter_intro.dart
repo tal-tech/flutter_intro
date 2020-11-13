@@ -81,6 +81,10 @@ class Intro {
   List<GlobalKey> get keys => _globalKeys;
 
   /// Set the configuration of the specified number of steps
+  ///
+  /// [stepIndex] Which step of configuration needs to be modified
+  /// [padding] Padding setting
+  /// [borderRadius] BorderRadius setting
   void setStepConfig(
     int stepIndex, {
     EdgeInsets padding,
@@ -94,6 +98,10 @@ class Intro {
   }
 
   /// Set the configuration of multiple steps
+  ///
+  /// [stepsIndex] Which steps of configuration needs to be modified
+  /// [padding] Padding setting
+  /// [borderRadius] BorderRadius setting
   void setStepsConfig(
     List<int> stepsIndex, {
     EdgeInsets padding,
@@ -134,19 +142,20 @@ class Intro {
     BorderRadiusGeometry borderRadiusGeometry,
     Widget child,
   }) {
+    final decoration = BoxDecoration(
+      color: Colors.white,
+      backgroundBlendMode: backgroundBlendMode,
+      borderRadius: borderRadiusGeometry,
+    );
     return AnimatedPositioned(
       duration: _animationDuration,
       child: AnimatedContainer(
         padding: padding,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          backgroundBlendMode: backgroundBlendMode,
-          borderRadius: borderRadiusGeometry,
-        ),
+        decoration: decoration,
         width: width,
         height: height,
-        duration: _animationDuration,
         child: child,
+        duration: _animationDuration,
       ),
       left: left,
       top: top,
@@ -157,9 +166,11 @@ class Intro {
     BuildContext context,
     GlobalKey globalKey,
   ) {
-    Size screenSize = MediaQuery.of(context).size;
     _overlayEntry = new OverlayEntry(
       builder: (BuildContext context) {
+        /// called when screen size changed
+        Size screenSize = MediaQuery.of(context).size;
+        print('_renderStep');
         return _DelayRenderedWidget(
           removed: _removed,
           childPersist: true,
@@ -209,16 +220,14 @@ class Intro {
   void _onNext(BuildContext context) {
     _currentStepIndex++;
     if (_currentStepIndex < stepCount) {
-      _createStepWidget(context);
-      _overlayEntry.markNeedsBuild();
+      _renderStep(context);
     }
   }
 
   void _onPrev(BuildContext context) {
     _currentStepIndex--;
     if (_currentStepIndex >= 0) {
-      _createStepWidget(context);
-      _overlayEntry.markNeedsBuild();
+      _renderStep(context);
     }
   }
 
@@ -255,6 +264,11 @@ class Intro {
       stepCount: stepCount,
       onFinish: _onFinish,
     ));
+  }
+
+  void _renderStep(BuildContext context) {
+    _createStepWidget(context);
+    _overlayEntry.markNeedsBuild();
   }
 
   /// Trigger the start method of the guided operation
