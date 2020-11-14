@@ -1,3 +1,9 @@
+## [0.6.0]
+
+* Expose currentStepIndex on intro instance.
+* Fix bug.
+
+
 ## [0.5.1]
 
 * Fix bug
