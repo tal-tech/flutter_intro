@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 part 'delay_rendered_widget.dart';
 part 'step_widget_builder.dart';
 part 'step_widget_params.dart';
+part 'throttling.dart';
 
 /// Flutter Intro main class
 ///
@@ -46,6 +47,8 @@ class Intro {
   List<GlobalKey> _globalKeys = [];
   final Color _maskColor = Colors.black.withOpacity(.6);
   final Duration _animationDuration = Duration(milliseconds: 300);
+  final _th = _Throttling(duration: Duration(milliseconds: 500));
+  Size _lastScreenSize;
 
   /// get current step page index
   int get currentStepIndex => _currentStepIndex;
@@ -134,11 +137,13 @@ class Intro {
   }
 
   Widget _maskBuilder({
-    @required double width,
-    @required double height,
+    double width,
+    double height,
     BlendMode backgroundBlendMode,
     @required double left,
     @required double top,
+    double bottom,
+    double right,
     BorderRadiusGeometry borderRadiusGeometry,
     Widget child,
   }) {
@@ -159,6 +164,8 @@ class Intro {
       ),
       left: left,
       top: top,
+      bottom: bottom,
+      right: right,
     );
   }
 
@@ -168,9 +175,17 @@ class Intro {
   ) {
     _overlayEntry = new OverlayEntry(
       builder: (BuildContext context) {
-        /// called when screen size changed
         Size screenSize = MediaQuery.of(context).size;
-        print('_renderStep');
+
+        if (screenSize.width != _lastScreenSize.width &&
+            screenSize.height != _lastScreenSize.height) {
+          _lastScreenSize = screenSize;
+          _th.throttle(() {
+            _createStepWidget(context);
+            _overlayEntry.markNeedsBuild();
+          });
+        }
+
         return _DelayRenderedWidget(
           removed: _removed,
           childPersist: true,
@@ -187,11 +202,11 @@ class Intro {
                   child: Stack(
                     children: [
                       _maskBuilder(
-                        width: screenSize.width,
-                        height: screenSize.height,
                         backgroundBlendMode: BlendMode.dstOut,
                         left: 0,
                         top: 0,
+                        right: 0,
+                        bottom: 0,
                       ),
                       _maskBuilder(
                         width: _widgetWidth,
@@ -275,6 +290,7 @@ class Intro {
   ///
   /// [context] Current environment [BuildContext]
   void start(BuildContext context) {
+    _lastScreenSize = MediaQuery.of(context).size;
     _removed = false;
     _currentStepIndex = 0;
     _createStepWidget(context);
