@@ -67,14 +67,17 @@ class StepWidgetBuilder {
     return position;
   }
 
-  /// Use default theme
-  /// [texts] Text prompt list, each item is the text that needs to be displayed on the corresponding guide page
-  /// [btnLabel] The text in the next button, the default value is "I KNOW"
-  /// [showStepLabel] Whether to display the step indicator behind the button, the default display
+  /// Use default theme.
+  ///
+  /// * [texts] Text prompt list, each item is the text that needs to be displayed on the corresponding guide page.
+  /// * [buttonTextBuilder] Create the text in the next button.
+  /// * [btnLabel] The text in the next button, use [buttonTextBuilder] to replace it.
+  /// * [showStepLabel] Whether to display the step indicator behind the button, use [buttonTextBuilder] to replace it.
   static Widget Function(StepWidgetParams params) useDefaultTheme({
     @required List<String> texts,
-    String btnLabel = 'I KNOW',
-    bool showStepLabel = true,
+    String Function(int currentStepIndex, int stepCount) buttonTextBuilder,
+    @deprecated String btnLabel = 'I KNOW',
+    @deprecated bool showStepLabel = true,
   }) {
     return (StepWidgetParams stepWidgetParams) {
       int currentStepIndex = stepWidgetParams.currentStepIndex;
@@ -130,7 +133,9 @@ class StepWidgetBuilder {
                           ? stepWidgetParams.onFinish
                           : stepWidgetParams.onNext,
                       child: Text(
-                        '$btnLabel' +
+                        (buttonTextBuilder != null
+                                ? buttonTextBuilder(currentStepIndex, stepCount)
+                                : '$btnLabel') +
                             (showStepLabel
                                 ? ' ${currentStepIndex + 1}/$stepCount'
                                 : ''),

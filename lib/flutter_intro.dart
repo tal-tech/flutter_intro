@@ -54,7 +54,7 @@ class Intro {
   int get currentStepIndex => _currentStepIndex;
 
   /// The method of generating the content of the guide page,
-  /// which will be called internally by [Intro] when the guide page appears
+  /// which will be called internally by [Intro] when the guide page appears.
   /// And will pass in some parameters on the current page through [StepWidgetParams]
   final Widget Function(StepWidgetParams params) widgetBuilder;
 
