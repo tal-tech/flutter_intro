@@ -1,3 +1,7 @@
+## [0.7.0]
+
+* Refactor the useDefaultTheme method, deprecated btnLabel and showStepLabel, and use buttonTextBuilder instead
+
 ## [0.6.0]
 
 * Expose currentStepIndex on intro instance.

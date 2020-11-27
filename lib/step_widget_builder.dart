@@ -67,14 +67,19 @@ class StepWidgetBuilder {
     return position;
   }
 
-  /// Use default theme
-  /// [texts] Text prompt list, each item is the text that needs to be displayed on the corresponding guide page
-  /// [btnLabel] The text in the next button, the default value is "I KNOW"
-  /// [showStepLabel] Whether to display the step indicator behind the button, the default display
+  /// Use default theme.
+  ///
+  /// * [texts] is an array of text on the guide page.
+  /// * [buttonTextBuilder] is the method of generating button text,
+  /// the parameters are the current page index and the total number of pages in sequence.
+  /// If it is provided, btnLabel and showStepLabel will be ignored.
+  /// * [btnLabel] is the text in the next button, deprecated, use [buttonTextBuilder] to replace it.
+  /// * [showStepLabel] indicates whether to display the current step number behind the button text, deprecated, please use [buttonTextBuilder] to replace it.
   static Widget Function(StepWidgetParams params) useDefaultTheme({
     @required List<String> texts,
-    String btnLabel = 'I KNOW',
-    bool showStepLabel = true,
+    String Function(int currentStepIndex, int stepCount) buttonTextBuilder,
+    @deprecated String btnLabel = 'I KNOW',
+    @deprecated bool showStepLabel = true,
   }) {
     return (StepWidgetParams stepWidgetParams) {
       int currentStepIndex = stepWidgetParams.currentStepIndex;
@@ -130,8 +135,10 @@ class StepWidgetBuilder {
                           ? stepWidgetParams.onFinish
                           : stepWidgetParams.onNext,
                       child: Text(
-                        '$btnLabel' +
-                            (showStepLabel
+                        (buttonTextBuilder != null
+                                ? buttonTextBuilder(currentStepIndex, stepCount)
+                                : '$btnLabel') +
+                            ((showStepLabel && buttonTextBuilder == null)
                                 ? ' ${currentStepIndex + 1}/$stepCount'
                                 : ''),
                         style: TextStyle(
