@@ -6,6 +6,10 @@ A better way for new feature introduction and step-by-step users guide for your 
 
 <img src='https://raw.githubusercontent.com/tal-tech/flutter_intro/master/doc/example1.gif' width='300' />
 
+Automatically adapt when the device screen orientation is switched.
+
+<img src='https://raw.githubusercontent.com/tal-tech/flutter_intro/master/doc/example2.gif' width='300' />
+
 ## Usage
 
 To use this package, add `flutter_intro` as a [dependency in your pubspec.yaml file](https://flutter.dev/docs/development/packages-and-plugins/using-packages).
@@ -28,17 +32,17 @@ Intro intro = Intro(
   /// Use the default useDefaultTheme provided by the library to quickly build a guide page
   /// Need to customize the style and content of the guide page, implement the widgetBuilder method yourself
   widgetBuilder: StepWidgetBuilder.useDefaultTheme(
-    /// Prompt text
+    /// Guide page text
     texts: [
       'Hello, I\'m Flutter Intro.',
       'I can help you quickly implement the Step By Step guide in the Flutter project.',
       'My usage is also very simple, you can quickly learn and use it through example and api documentation.',
       'In order to quickly implement the guidance, I also provide a set of out-of-the-box themes, I wish you all a happy use, goodbye!',
     ],
-    /// Button label
-    btnLabel: 'I KNOW',
-    /// Whether to display the current step after the button
-    showStepLabel: true,
+    /// Button text
+    buttonTextBuilder: (curr, total) {
+      return curr < total - 1 ? 'Next' : 'Finish';
+    },
   ),
 );
 ```
@@ -50,7 +54,7 @@ The `intro` object in the first step contains the `keys` property, and `keys` is
 
 ```dart
 Placeholder(
-  /// The first guide page is the first item in the binding keys
+  /// the first guide page is the first item in the binding keys
   key: intro.keys[0]
 )
 ```
@@ -108,7 +112,7 @@ class StepWidgetParams {
 `StepWidgetParams` provides all the parameters needed to generate the guide page. 
 The theme provided by default is also based on this parameter to generate the guide page.
 
-## Q&A
+## Troubleshoot
 
 Q1. What if the highlighted area is not displayed completely?
 
@@ -129,6 +133,8 @@ intro = Intro(
 ```
 <img src='https://raw.githubusercontent.com/tal-tech/flutter_intro/master/doc/img5.jpg' width='300' />
 
+<hr />
+
 Q2. Can I set different configurations for each step?
 
 A2. Above version `0.4.x`, you can set single or multiple step settings(padding & borderRadius) through setStepConfig and setStepsConfig.
@@ -141,6 +147,7 @@ intro.setStepConfig(
     horizontal: -8,
   ),
 );
+
 intro.setStepsConfig(
   [0, 1],
   borderRadius: BorderRadius.all(
@@ -150,6 +157,8 @@ intro.setStepsConfig(
   ),
 );
 ```
+
+<hr />
 
 Q3. Can I make the highlight area smaller?
 
@@ -166,103 +175,29 @@ intro.setStepConfig(
 ```
 <img src='https://raw.githubusercontent.com/tal-tech/flutter_intro/master/doc/img6.jpg' width='300' />
 
-Q4. Can I destroy the guide page manually?
+<hr />
+
+Q4. How can I manually destroy the guide page, such as the user pressing the back button?
 
 A4. Above version `0.5.x`, you can call the dispose method of the intro instance.
 
+```dart
+WillPopScope(
+  child: Scaffold(...),
+  onWillPop: () async {
+    intro.dispose();
+    return true;
+  },
+)
+```
+
+<hr />
+
+Q5: How to use in the web environment?
+
+A5: Due to [this bug](https://github.com/flutter/flutter/issues/69849) in Flutter, it is temporarily not supported for use on the Web.
+
 ## Example
 
-```dart
-class _MyHomePageState extends State<MyHomePage> {
-  Intro intro;
-
-  _MyHomePageState() {
-    /// init Intro
-    intro = Intro(
-      stepCount: 4,
-
-      /// use defaultTheme, or you can implement widgetBuilder function yourself
-      widgetBuilder: StepWidgetBuilder.useDefaultTheme(
-        texts: [
-          'Hello, I\'m Flutter Intro.',
-          'I can help you quickly implement the Step By Step guide in the Flutter project.',
-          'My usage is also very simple, you can quickly learn and use it through example and api documentation.',
-          'In order to quickly implement the guidance, I also provide a set of out-of-the-box themes, I wish you all a happy use, goodbye!',
-        ],
-        btnLabel: 'I KNOW',
-        showStepLabel: true,
-      ),
-    );
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    Timer(Duration(microseconds: 0), () {
-      /// start the intro
-      intro.start(context);
-    });
-  }
-
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: SizedBox.expand(
-        child: Container(
-          padding: EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(
-                width: 100,
-                child: Placeholder(
-                  /// 2nd guide
-                  key: intro.keys[1],
-                  fallbackHeight: 100,
-                ),
-              ),
-              SizedBox(
-                height: 16,
-              ),
-              Placeholder(
-                /// 3rd guide
-                key: intro.keys[2],
-                fallbackHeight: 100,
-              ),
-              SizedBox(
-                height: 16,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  SizedBox(
-                    width: 100,
-                    child: Placeholder(
-                      /// 4th guide
-                      key: intro.keys[3],
-                      fallbackHeight: 300,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        /// 1st guide
-        key: intro.keys[0],
-        child: Icon(
-          Icons.play_arrow,
-        ),
-        onPressed: () {
-          intro.start(context);
-        },
-      ),
-    );
-  }
-}
-```
+Please check the example in `example/lib/main.dart`.
 
