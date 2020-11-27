@@ -69,10 +69,12 @@ class StepWidgetBuilder {
 
   /// Use default theme.
   ///
-  /// * [texts] Text prompt list, each item is the text that needs to be displayed on the corresponding guide page.
-  /// * [buttonTextBuilder] Create the text in the next button.
-  /// * [btnLabel] The text in the next button, use [buttonTextBuilder] to replace it.
-  /// * [showStepLabel] Whether to display the step indicator behind the button, use [buttonTextBuilder] to replace it.
+  /// * [texts] is an array of text on the guide page.
+  /// * [buttonTextBuilder] is the method of generating button text,
+  /// the parameters are the current page index and the total number of pages in sequence.
+  /// If it is provided, btnLabel and showStepLabel will be ignored.
+  /// * [btnLabel] is the text in the next button, deprecated, use [buttonTextBuilder] to replace it.
+  /// * [showStepLabel] indicates whether to display the current step number behind the button text, deprecated, please use [buttonTextBuilder] to replace it.
   static Widget Function(StepWidgetParams params) useDefaultTheme({
     @required List<String> texts,
     String Function(int currentStepIndex, int stepCount) buttonTextBuilder,
@@ -136,7 +138,7 @@ class StepWidgetBuilder {
                         (buttonTextBuilder != null
                                 ? buttonTextBuilder(currentStepIndex, stepCount)
                                 : '$btnLabel') +
-                            (showStepLabel
+                            ((showStepLabel && buttonTextBuilder == null)
                                 ? ' ${currentStepIndex + 1}/$stepCount'
                                 : ''),
                         style: TextStyle(
