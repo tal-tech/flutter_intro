@@ -1,3 +1,7 @@
+## [0.8.0]
+
+* Add noAnimation property to disable animation
+
 ## [0.7.0]
 
 * Refactor the useDefaultTheme method, deprecated btnLabel and showStepLabel, and use buttonTextBuilder instead

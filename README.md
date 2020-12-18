@@ -20,6 +20,9 @@ To use this package, add `flutter_intro` as a [dependency in your pubspec.yaml f
 import 'package:flutter_intro/flutter_intro.dart';
 
 Intro intro = Intro(
+  /// You can set it true to disable animation
+  noAnimation: false,
+
   /// The total number of guide pages, must be passed
   stepCount: 4,
 

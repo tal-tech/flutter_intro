@@ -46,12 +46,16 @@ class Intro {
   List<Map> _configMap = [];
   List<GlobalKey> _globalKeys = [];
   final Color _maskColor = Colors.black.withOpacity(.6);
-  final Duration _animationDuration = Duration(milliseconds: 300);
+  Duration _animationDuration;
+
   final _th = _Throttling(duration: Duration(milliseconds: 500));
   Size _lastScreenSize;
 
   /// get current step page index
   int get currentStepIndex => _currentStepIndex;
+
+  /// No animation
+  final bool noAnimation;
 
   /// The method of generating the content of the guide page,
   /// which will be called internally by [Intro] when the guide page appears.
@@ -72,9 +76,12 @@ class Intro {
   Intro({
     @required this.widgetBuilder,
     @required this.stepCount,
+    this.noAnimation = false,
     this.borderRadius = const BorderRadius.all(Radius.circular(4)),
     this.padding = const EdgeInsets.all(8),
   }) : assert(stepCount > 0) {
+    _animationDuration =
+        noAnimation ? Duration(milliseconds: 0) : Duration(milliseconds: 300);
     for (int i = 0; i < stepCount; i++) {
       _globalKeys.add(GlobalKey());
       _configMap.add({});
@@ -221,6 +228,9 @@ class Intro {
                   ),
                 ),
                 _DelayRenderedWidget(
+                  duration: noAnimation
+                      ? Duration(milliseconds: 0)
+                      : Duration(milliseconds: 200),
                   child: _stepWidget,
                 ),
               ],
