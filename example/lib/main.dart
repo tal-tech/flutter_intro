@@ -73,8 +73,8 @@ class _MyHomePageState extends State<MyHomePage> {
           'My usage is also very simple, you can quickly learn and use it through example and api documentation.',
           'In order to quickly implement the guidance, I also provide a set of out-of-the-box themes, I wish you all a happy use, goodbye!',
         ],
-        buttonTextBuilder: (curr, total) {
-          return curr < total - 1 ? 'Next' : 'Finish';
+        buttonTextBuilder: (currPage, totalPage) {
+          return currPage < totalPage - 1 ? 'Next' : 'Finish';
         },
       ),
     );

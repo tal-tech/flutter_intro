@@ -1,14 +1,19 @@
+## [1.0.0]
+
+* Breaking update: remove `btnLabel` and `showStepLabel`
+* Add `maskColor` to set mask color of step page
+
 ## [0.8.0]
 
-* Add noAnimation property to disable animation
+* Add `noAnimation` property to disable animation
 
 ## [0.7.0]
 
-* Refactor the useDefaultTheme method, deprecated btnLabel and showStepLabel, and use buttonTextBuilder instead
+* Refactor the `useDefaultTheme` method, deprecated `btnLabel` and `showStepLabel`, and use `buttonTextBuilder` instead
 
 ## [0.6.0]
 
-* Expose currentStepIndex on intro instance.
+* Expose `currentStepIndex` on intro instance.
 * Fix bug.
 
 
@@ -18,7 +23,7 @@
 
 ## [0.5.0]
 
-* Add dispose method to destroy the guide page
+* Add `dispose` method to destroy the guide page
 
 ## [0.4.1]
 
@@ -27,7 +32,7 @@
 ## [0.4.0]
 
 * Fix the problem that the prompt text will exceed the screen boundary
-* Added setStepConfig and setStepsConfig methods to set step settings
+* Added `setStepConfig` and `setStepsConfig` methods to set step settings
 
 ## [0.3.4]
 
@@ -51,7 +56,7 @@
 
 ## [0.2.0]
 
-* Breaking update: StepWidgetParams refactor
+* Breaking update: `StepWidgetParams` refactor
 * Improved documentation
 
 ## [0.1.0]

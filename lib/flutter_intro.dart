@@ -45,13 +45,14 @@ class Intro {
   Widget _stepWidget;
   List<Map> _configMap = [];
   List<GlobalKey> _globalKeys = [];
-  final Color _maskColor = Colors.black.withOpacity(.6);
   Duration _animationDuration;
-
-  final _th = _Throttling(duration: Duration(milliseconds: 500));
   Size _lastScreenSize;
+  final _th = _Throttling(duration: Duration(milliseconds: 500));
 
-  /// get current step page index
+  /// The mask color of step page
+  final Color maskColor;
+
+  /// Current step page index
   int get currentStepIndex => _currentStepIndex;
 
   /// No animation
@@ -76,6 +77,7 @@ class Intro {
   Intro({
     @required this.widgetBuilder,
     @required this.stepCount,
+    this.maskColor = const Color.fromRGBO(0, 0, 0, .6),
     this.noAnimation = false,
     this.borderRadius = const BorderRadius.all(Radius.circular(4)),
     this.padding = const EdgeInsets.all(8),
@@ -203,7 +205,7 @@ class Intro {
               children: [
                 ColorFiltered(
                   colorFilter: ColorFilter.mode(
-                    _maskColor,
+                    maskColor,
                     BlendMode.srcOut,
                   ),
                   child: Stack(
