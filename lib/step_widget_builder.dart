@@ -70,12 +70,14 @@ class StepWidgetBuilder {
   /// Use default theme.
   ///
   /// * [texts] is an array of text on the guide page.
-  /// * [buttonTextBuilder] is the method of generating button text,
+  /// * [buttonTextBuilder] is the method of generating button text.
+  /// * [maskClosable] click on whether the mask is allowed to be closed.
   /// the parameters are the current page index and the total number of pages in sequence.
   static Widget Function(StepWidgetParams params) useDefaultTheme({
     @required List<String> texts,
     @required
         String Function(int currentStepIndex, int stepCount) buttonTextBuilder,
+    bool maskClosable = false,
   }) {
     return (StepWidgetParams stepWidgetParams) {
       int currentStepIndex = stepWidgetParams.currentStepIndex;
@@ -88,65 +90,75 @@ class StepWidgetBuilder {
         offset: offset,
       );
 
-      return Stack(
-        children: [
-          Positioned(
-            child: Container(
-              width: position['width'],
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: position['crossAxisAlignment'],
-                children: [
-                  Text(
-                    currentStepIndex > texts.length - 1
-                        ? ''
-                        : texts[currentStepIndex],
-                    softWrap: true,
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      height: 1.4,
-                      color: Colors.white,
-                    ),
-                  ),
-                  SizedBox(
-                    height: 12,
-                  ),
-                  SizedBox(
-                    height: 28,
-                    child: OutlineButton(
-                      padding: EdgeInsets.symmetric(
-                        vertical: 0,
-                        horizontal: 8,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(64),
-                        ),
-                      ),
-                      highlightedBorderColor: Colors.white,
-                      borderSide: BorderSide(color: Colors.white),
-                      textColor: Colors.white,
-                      onPressed: stepCount - 1 == currentStepIndex
-                          ? stepWidgetParams.onFinish
-                          : stepWidgetParams.onNext,
-                      child: Text(
-                        buttonTextBuilder(currentStepIndex, stepCount),
-                        style: TextStyle(
-                          fontSize: 12,
-                        ),
+      return GestureDetector(
+        onTap: () {
+          if (maskClosable) {
+            stepCount - 1 == currentStepIndex
+                ? stepWidgetParams.onFinish()
+                : stepWidgetParams.onNext();
+          }
+        },
+        behavior: HitTestBehavior.opaque,
+        child: Stack(
+          children: [
+            Positioned(
+              child: Container(
+                width: position['width'],
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: position['crossAxisAlignment'],
+                  children: [
+                    Text(
+                      currentStepIndex > texts.length - 1
+                          ? ''
+                          : texts[currentStepIndex],
+                      softWrap: true,
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        height: 1.4,
+                        color: Colors.white,
                       ),
                     ),
-                  ),
-                ],
+                    SizedBox(
+                      height: 12,
+                    ),
+                    SizedBox(
+                      height: 28,
+                      child: OutlineButton(
+                        padding: EdgeInsets.symmetric(
+                          vertical: 0,
+                          horizontal: 8,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(64),
+                          ),
+                        ),
+                        highlightedBorderColor: Colors.white,
+                        borderSide: BorderSide(color: Colors.white),
+                        textColor: Colors.white,
+                        onPressed: stepCount - 1 == currentStepIndex
+                            ? stepWidgetParams.onFinish
+                            : stepWidgetParams.onNext,
+                        child: Text(
+                          buttonTextBuilder(currentStepIndex, stepCount),
+                          style: TextStyle(
+                            fontSize: 12,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
+              left: position['left'],
+              top: position['top'],
+              bottom: position['bottom'],
+              right: position['right'],
             ),
-            left: position['left'],
-            top: position['top'],
-            bottom: position['bottom'],
-            right: position['right'],
-          ),
-        ],
+          ],
+        ),
       );
     };
   }

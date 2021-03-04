@@ -1,3 +1,7 @@
+## [1.1.0]
+
+* Add `maskClosable` property in `defaultTheme` to set click on whether the mask is allowed to be closed.
+
 ## [1.0.0]
 
 * Breaking update: remove `btnLabel` and `showStepLabel`

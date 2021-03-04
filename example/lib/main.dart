@@ -76,6 +76,7 @@ class _MyHomePageState extends State<MyHomePage> {
         buttonTextBuilder: (currPage, totalPage) {
           return currPage < totalPage - 1 ? 'Next' : 'Finish';
         },
+        maskClosable: true,
       ),
     );
   }

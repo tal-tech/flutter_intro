@@ -46,6 +46,8 @@ Intro intro = Intro(
     buttonTextBuilder: (curr, total) {
       return curr < total - 1 ? 'Next' : 'Finish';
     },
+    /// Click on whether the mask is allowed to be closed.
+    maskClosable: true,
   ),
 );
 ```
