@@ -1,10 +1,10 @@
 name: flutter_intro
 description: A better way for new feature introduction and step-by-step users guide for your Flutter project.
-version: 1.1.0
+version: 2.0.0
 homepage: https://github.com/tal-tech/flutter_intro
 
 environment:
-  sdk: ">=2.7.0 <3.0.0"
+  sdk: '>=2.12.0 <3.0.0'
   flutter: ">=1.17.0"
 
 dependencies:

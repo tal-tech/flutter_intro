@@ -37,16 +37,16 @@ part 'throttling.dart';
 ///
 class Intro {
   bool _removed = false;
-  double _widgetWidth;
-  double _widgetHeight;
-  Offset _widgetOffset;
-  OverlayEntry _overlayEntry;
+  double? _widgetWidth;
+  double? _widgetHeight;
+  Offset? _widgetOffset;
+  OverlayEntry? _overlayEntry;
   int _currentStepIndex = 0;
-  Widget _stepWidget;
+  Widget? _stepWidget;
   List<Map> _configMap = [];
   List<GlobalKey> _globalKeys = [];
-  Duration _animationDuration;
-  Size _lastScreenSize;
+  late Duration _animationDuration;
+  late Size _lastScreenSize;
   final _th = _Throttling(duration: Duration(milliseconds: 500));
 
   /// The mask color of step page
@@ -75,8 +75,8 @@ class Intro {
   /// Create an Intro instance, the parameter [stepCount] is the number of guide pages
   /// [widgetBuilder] is the method of generating the guide page, and returns a [Widget] as the guide page
   Intro({
-    @required this.widgetBuilder,
-    @required this.stepCount,
+    required this.widgetBuilder,
+    required this.stepCount,
     this.maskColor = const Color.fromRGBO(0, 0, 0, .6),
     this.noAnimation = false,
     this.borderRadius = const BorderRadius.all(Radius.circular(4)),
@@ -99,8 +99,8 @@ class Intro {
   /// [borderRadius] BorderRadius setting
   void setStepConfig(
     int stepIndex, {
-    EdgeInsets padding,
-    BorderRadiusGeometry borderRadius,
+    EdgeInsets? padding,
+    BorderRadiusGeometry? borderRadius,
   }) {
     assert(stepIndex >= 0 && stepIndex < stepCount);
     _configMap[stepIndex] = {
@@ -116,8 +116,8 @@ class Intro {
   /// [borderRadius] BorderRadius setting
   void setStepsConfig(
     List<int> stepsIndex, {
-    EdgeInsets padding,
-    BorderRadiusGeometry borderRadius,
+    EdgeInsets? padding,
+    BorderRadiusGeometry? borderRadius,
   }) {
     assert(stepsIndex
         .every((stepIndex) => stepIndex >= 0 && stepIndex < stepCount));
@@ -131,8 +131,9 @@ class Intro {
   }
 
   void _getWidgetInfo(GlobalKey globalKey) {
-    EdgeInsets currentConfig = _configMap[_currentStepIndex]['padding'];
-    RenderBox renderBox = globalKey.currentContext.findRenderObject();
+    EdgeInsets? currentConfig = _configMap[_currentStepIndex]['padding'];
+    RenderBox renderBox =
+        globalKey.currentContext!.findRenderObject() as RenderBox;
     _widgetWidth = renderBox.size.width +
         (currentConfig?.horizontal ?? padding.horizontal);
     _widgetHeight =
@@ -146,15 +147,15 @@ class Intro {
   }
 
   Widget _maskBuilder({
-    double width,
-    double height,
-    BlendMode backgroundBlendMode,
-    @required double left,
-    @required double top,
-    double bottom,
-    double right,
-    BorderRadiusGeometry borderRadiusGeometry,
-    Widget child,
+    double? width,
+    double? height,
+    BlendMode? backgroundBlendMode,
+    required double left,
+    required double top,
+    double? bottom,
+    double? right,
+    BorderRadiusGeometry? borderRadiusGeometry,
+    Widget? child,
   }) {
     final decoration = BoxDecoration(
       color: Colors.white,
@@ -191,7 +192,7 @@ class Intro {
           _lastScreenSize = screenSize;
           _th.throttle(() {
             _createStepWidget(context);
-            _overlayEntry.markNeedsBuild();
+            _overlayEntry!.markNeedsBuild();
           });
         }
 
@@ -220,8 +221,8 @@ class Intro {
                       _maskBuilder(
                         width: _widgetWidth,
                         height: _widgetHeight,
-                        left: _widgetOffset.dx,
-                        top: _widgetOffset.dy,
+                        left: _widgetOffset!.dx,
+                        top: _widgetOffset!.dy,
                         borderRadiusGeometry: _configMap[_currentStepIndex]
                                 ['borderRadius'] ??
                             borderRadius,
@@ -241,7 +242,7 @@ class Intro {
         );
       },
     );
-    Overlay.of(context).insert(_overlayEntry);
+    Overlay.of(context)!.insert(_overlayEntry!);
   }
 
   void _onNext(BuildContext context) {
@@ -261,9 +262,9 @@ class Intro {
   void _onFinish() {
     if (_overlayEntry == null) return;
     _removed = true;
-    _overlayEntry.markNeedsBuild();
+    _overlayEntry!.markNeedsBuild();
     Timer(_animationDuration, () {
-      _overlayEntry.remove();
+      _overlayEntry!.remove();
       _overlayEntry = null;
     });
   }
@@ -271,7 +272,7 @@ class Intro {
   void _createStepWidget(BuildContext context) {
     _getWidgetInfo(_globalKeys[_currentStepIndex]);
     Size screenSize = MediaQuery.of(context).size;
-    Size widgetSize = Size(_widgetWidth, _widgetHeight);
+    Size widgetSize = Size(_widgetWidth!, _widgetHeight!);
 
     _stepWidget = widgetBuilder(StepWidgetParams(
       screenSize: screenSize,
@@ -295,7 +296,7 @@ class Intro {
 
   void _renderStep(BuildContext context) {
     _createStepWidget(context);
-    _overlayEntry.markNeedsBuild();
+    _overlayEntry!.markNeedsBuild();
   }
 
   /// Trigger the start method of the guided operation

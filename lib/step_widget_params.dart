@@ -1,23 +1,13 @@
 part of flutter_intro;
 
-/// Highlight component parameters
-///
-class WidgetParams {
-  /// Padding of highlighted area
-  EdgeInsets padding;
-
-  /// Border radius of the highlighted area
-  BorderRadiusGeometry borderRadius;
-}
-
 /// The data passed in when the system calls [IntroStep.widgetBuilder] when the guide page is generated
 ///
 class StepWidgetParams {
   /// Return to the previous guide page method, or null if there is none
-  final VoidCallback onPrev;
+  final VoidCallback? onPrev;
 
-  /// Enter the next guide page method, or null if there is no
-  final VoidCallback onNext;
+  /// Enter the next guide page method, or null if there is none
+  final VoidCallback? onNext;
 
   /// End all guide page methods
   final VoidCallback onFinish;
@@ -35,17 +25,17 @@ class StepWidgetParams {
   final Size size;
 
   /// The coordinates of the upper left corner of the highlighted component
-  final Offset offset;
+  final Offset? offset;
 
   StepWidgetParams({
     this.onPrev,
     this.onNext,
-    this.onFinish,
-    @required this.screenSize,
-    @required this.size,
-    @required this.currentStepIndex,
-    @required this.stepCount,
-    @required this.offset,
+    required this.onFinish,
+    required this.screenSize,
+    required this.size,
+    required this.currentStepIndex,
+    required this.stepCount,
+    required this.offset,
   });
 
   @override

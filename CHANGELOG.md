@@ -1,3 +1,8 @@
+## [2.0.0]
+
+* Migrating to null safety
+* Replace deprecated components
+
 ## [1.1.0]
 
 * Add `maskClosable` property in `defaultTheme` to set click on whether the mask is allowed to be closed.

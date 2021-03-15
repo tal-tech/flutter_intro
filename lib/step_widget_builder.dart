@@ -18,9 +18,9 @@ part of flutter_intro;
 ///
 class StepWidgetBuilder {
   static Map _smartGetPosition({
-    Size size,
-    Size screenSize,
-    Offset offset,
+    required Size size,
+    required Size screenSize,
+    required Offset offset,
   }) {
     double height = size.height;
     double width = size.width;
@@ -74,15 +74,15 @@ class StepWidgetBuilder {
   /// * [maskClosable] click on whether the mask is allowed to be closed.
   /// the parameters are the current page index and the total number of pages in sequence.
   static Widget Function(StepWidgetParams params) useDefaultTheme({
-    @required List<String> texts,
-    @required
-        String Function(int currentStepIndex, int stepCount) buttonTextBuilder,
+    required List<String> texts,
+    required String Function(int currentStepIndex, int stepCount)
+        buttonTextBuilder,
     bool maskClosable = false,
   }) {
     return (StepWidgetParams stepWidgetParams) {
       int currentStepIndex = stepWidgetParams.currentStepIndex;
       int stepCount = stepWidgetParams.stepCount;
-      Offset offset = stepWidgetParams.offset;
+      Offset offset = stepWidgetParams.offset!;
 
       Map position = _smartGetPosition(
         screenSize: stepWidgetParams.screenSize,
@@ -93,9 +93,13 @@ class StepWidgetBuilder {
       return GestureDetector(
         onTap: () {
           if (maskClosable) {
-            stepCount - 1 == currentStepIndex
-                ? stepWidgetParams.onFinish()
-                : stepWidgetParams.onNext();
+            if (stepCount - 1 == currentStepIndex) {
+              stepWidgetParams.onFinish();
+            } else {
+              if (stepWidgetParams.onNext != null) {
+                stepWidgetParams.onNext!();
+              }
+            }
           }
         },
         behavior: HitTestBehavior.opaque,
@@ -125,19 +129,30 @@ class StepWidgetBuilder {
                     ),
                     SizedBox(
                       height: 28,
-                      child: OutlineButton(
-                        padding: EdgeInsets.symmetric(
-                          vertical: 0,
-                          horizontal: 8,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(64),
+                      child: OutlinedButton(
+                        style: ButtonStyle(
+                          foregroundColor: MaterialStateProperty.all<Color>(
+                            Colors.white,
+                          ),
+                          overlayColor: MaterialStateProperty.all<Color>(
+                            Colors.white.withOpacity(0.1),
+                          ),
+                          side: MaterialStateProperty.all<BorderSide>(
+                            BorderSide(
+                              color: Colors.white,
+                            ),
+                          ),
+                          padding:
+                              MaterialStateProperty.all<EdgeInsetsGeometry>(
+                            EdgeInsets.symmetric(
+                              vertical: 0,
+                              horizontal: 8,
+                            ),
+                          ),
+                          shape: MaterialStateProperty.all<OutlinedBorder>(
+                            StadiumBorder(),
                           ),
                         ),
-                        highlightedBorderColor: Colors.white,
-                        borderSide: BorderSide(color: Colors.white),
-                        textColor: Colors.white,
                         onPressed: stepCount - 1 == currentStepIndex
                             ? stepWidgetParams.onFinish
                             : stepWidgetParams.onNext,
