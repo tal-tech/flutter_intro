@@ -187,7 +187,7 @@ class Intro {
       builder: (BuildContext context) {
         Size screenSize = MediaQuery.of(context).size;
 
-        if (screenSize.width != _lastScreenSize.width &&
+        if (screenSize.width != _lastScreenSize.width ||
             screenSize.height != _lastScreenSize.height) {
           _lastScreenSize = screenSize;
           _th.throttle(() {

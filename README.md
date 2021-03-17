@@ -202,6 +202,8 @@ Q5: How to use in the web environment?
 
 A5: Due to [this bug](https://github.com/flutter/flutter/issues/69849) in Flutter, it is temporarily not supported for use on the Web.
 
+<img src='https://raw.githubusercontent.com/tal-tech/flutter_intro/master/doc/example3.gif' width='600' />
+
 ## Example
 
 Please check the example in `example/lib/main.dart`.
