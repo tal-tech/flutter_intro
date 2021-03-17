@@ -200,7 +200,7 @@ WillPopScope(
 
 Q5: How to use in the web environment?
 
-A5: Due to [this bug](https://github.com/flutter/flutter/issues/69849) in Flutter, it is temporarily not supported for use on the Web.
+A5: Due to [this bug](https://github.com/flutter/flutter/issues/69849) in Flutter, it is temporarily not supported for use on the Web.(Update: It works in Flutter 2.0+)
 
 ## Example
 
