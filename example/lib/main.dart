@@ -45,6 +45,9 @@ class StartPage extends StatelessWidget {
                 );
               },
             ),
+            SizedBox(
+              height: 16,
+            ),
             ElevatedButton(
               child: Text('Start with customTheme'),
               onPressed: () {
@@ -156,7 +159,12 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    Timer(Duration(microseconds: 0), () {
+    Timer(
+        Duration(
+          milliseconds: 500,
+        ), () {
+      print('start');
+
       /// start the intro
       intro.start(context);
     });

@@ -1,3 +1,7 @@
+## [2.0.1]
+
+* Fix bug.
+
 ## [2.0.0]
 
 * Migrating to null safety
