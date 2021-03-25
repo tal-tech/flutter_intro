@@ -264,6 +264,7 @@ class Intro {
     _removed = true;
     _overlayEntry!.markNeedsBuild();
     Timer(_animationDuration, () {
+      if (_overlayEntry == null) return;
       _overlayEntry!.remove();
       _overlayEntry = null;
     });
