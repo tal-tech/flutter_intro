@@ -6,6 +6,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 part 'delay_rendered_widget.dart';
+part 'intro_status.dart';
 part 'step_widget_builder.dart';
 part 'step_widget_params.dart';
 part 'throttling.dart';
@@ -53,7 +54,10 @@ class Intro {
   final Color maskColor;
 
   /// Current step page index
-  int get currentStepIndex => _currentStepIndex;
+  /// 2021-03-31 @caden
+  /// I don’t remember why this parameter was exposed at the time,
+  /// it seems to be useless, and there is a bug in this one, so let’s block it temporarily.
+  // int get currentStepIndex => _currentStepIndex;
 
   /// No animation
   final bool noAnimation;
@@ -317,5 +321,14 @@ class Intro {
   /// Destroy the guide page and release all resources
   void dispose() {
     _onFinish();
+  }
+
+  /// Get intro instance current status
+  IntroStatus getStatus() {
+    bool isOpen = _overlayEntry != null;
+    IntroStatus introStatus = IntroStatus(
+      isOpen: isOpen,
+    );
+    return introStatus;
   }
 }

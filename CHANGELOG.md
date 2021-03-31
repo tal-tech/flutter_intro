@@ -1,3 +1,8 @@
+## [2.1.0]
+
+* Add `getStatus` method to get current status, it's very useful in some cases
+* Remove the `currentStepIndex` property exposed by the intro instance, it's useless and has bugs
+
 ## [2.0.2]
 
 * Fix bug.
@@ -13,7 +18,7 @@
 
 ## [1.1.0]
 
-* Add `maskClosable` property in `defaultTheme` to set click on whether the mask is allowed to be closed.
+* Add `maskClosable` property in `defaultTheme` to set click on whether the mask is allowed to be closed
 
 ## [1.0.0]
 
@@ -30,8 +35,8 @@
 
 ## [0.6.0]
 
-* Expose `currentStepIndex` on intro instance.
-* Fix bug.
+* Expose `currentStepIndex` on intro instance
+* Fix bug
 
 
 ## [0.5.1]
@@ -86,12 +91,12 @@
 
 ## [0.0.3]
 
-* Optimize animation effects.
+* Optimize animation effects
 
 ## [0.0.2]
 
-* Add Readme.
+* Add Readme
 
 ## [0.0.1]
 
-* First version.
+* First version

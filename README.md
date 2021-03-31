@@ -186,11 +186,19 @@ Q4. How can I manually destroy the guide page, such as the user pressing the bac
 
 A4. Above version `0.5.x`, you can call the dispose method of the intro instance.
 
+Notice: You can call the getStatus method only above version `2.1.0`.
+
 ```dart
 WillPopScope(
   child: Scaffold(...),
   onWillPop: () async {
-    intro.dispose();
+    // sometimes you need get current status to make some judgements
+    IntroStatus introStatus = intro.getStatus();
+    if (introStatus.isOpen) {
+      // destroy guide page when tap back key
+      intro.dispose();
+      return false;
+    }
     return true;
   },
 )

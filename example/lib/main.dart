@@ -230,8 +230,13 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
       ),
       onWillPop: () async {
-        // destroy guide page when tap back key
-        intro.dispose();
+        // sometimes you need get current status
+        IntroStatus introStatus = intro.getStatus();
+        if (introStatus.isOpen) {
+          // destroy guide page when tap back key
+          intro.dispose();
+          return false;
+        }
         return true;
       },
     );
