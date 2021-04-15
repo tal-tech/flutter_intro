@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_intro/flutter_intro.dart';
+import 'package:flutter_intro/shadow_view.dart';
 
 void main() {
   runApp(MyApp());
@@ -120,11 +121,13 @@ class _MyHomePageState extends State<MyHomePage> {
     if (mode == Mode.customTheme) {
       /// init Intro
       intro = Intro(
-        stepCount: 4,
+          stepCount: 4,
 
-        /// implement widgetBuilder function
-        widgetBuilder: customThemeWidgetBuilder,
-      );
+          /// implement widgetBuilder function
+          widgetBuilder: customThemeWidgetBuilder,
+          onMaskClick: () {
+            intro.dispose();
+          });
     }
   }
 
@@ -184,19 +187,27 @@ class _MyHomePageState extends State<MyHomePage> {
               children: [
                 SizedBox(
                   width: 100,
-                  child: Placeholder(
-                    /// 2nd guide
+                  child: ShadowView(
                     key: intro.keys[1],
-                    fallbackHeight: 100,
+                    child: Placeholder(
+                      /// 2nd guide
+
+                      fallbackHeight: 100,
+                    ),
+                    onTap: () => print('Placeholder 1 clicked'),
                   ),
                 ),
                 SizedBox(
                   height: 16,
                 ),
-                Placeholder(
-                  /// 3rd guide
+                ShadowView(
                   key: intro.keys[2],
-                  fallbackHeight: 100,
+                  child: Placeholder(
+                    /// 3rd guide
+
+                    fallbackHeight: 100,
+                  ),
+                  onTap: () => print('Placeholder 2 clicked'),
                 ),
                 SizedBox(
                   height: 16,
@@ -206,10 +217,14 @@ class _MyHomePageState extends State<MyHomePage> {
                   children: [
                     SizedBox(
                       width: 100,
-                      child: Placeholder(
-                        /// 4th guide
+                      child: ShadowView(
                         key: intro.keys[3],
-                        fallbackHeight: 100,
+                        child: Placeholder(
+                          /// 4th guide
+
+                          fallbackHeight: 100,
+                        ),
+                        onTap: () => print('Placeholder 3 clicked'),
                       ),
                     ),
                   ],

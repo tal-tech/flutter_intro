@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_intro/shadow_view.dart';
 
 part 'delay_rendered_widget.dart';
 part 'intro_status.dart';
@@ -76,6 +77,7 @@ class Intro {
   /// How many steps are there in total
   final int stepCount;
 
+  final VoidCallback? onMaskClick;
   /// Create an Intro instance, the parameter [stepCount] is the number of guide pages
   /// [widgetBuilder] is the method of generating the guide page, and returns a [Widget] as the guide page
   Intro({
@@ -85,6 +87,7 @@ class Intro {
     this.noAnimation = false,
     this.borderRadius = const BorderRadius.all(Radius.circular(4)),
     this.padding = const EdgeInsets.all(8),
+    this.onMaskClick,
   }) : assert(stepCount > 0) {
     _animationDuration =
         noAnimation ? Duration(milliseconds: 0) : Duration(milliseconds: 300);
@@ -221,7 +224,9 @@ class Intro {
                         top: 0,
                         right: 0,
                         bottom: 0,
+                        child: GestureDetector(onTap: onMaskClick,)
                       ),
+
                       _maskBuilder(
                         width: _widgetWidth,
                         height: _widgetHeight,
@@ -230,6 +235,12 @@ class Intro {
                         borderRadiusGeometry: _configMap[_currentStepIndex]
                                 ['borderRadius'] ??
                             borderRadius,
+                        child: GestureDetector(onTap: (){
+                          if( _globalKeys[_currentStepIndex].currentWidget is ShadowView){
+                            ShadowView shadowView =  _globalKeys[_currentStepIndex].currentWidget as ShadowView;
+                            shadowView.onTap?.call();
+                          }
+                        } )
                       ),
                     ],
                   ),
