@@ -227,17 +227,19 @@ class Intro {
                         height: _widgetHeight,
                         left: _widgetOffset!.dx,
                         top: _widgetOffset!.dy,
-                        borderRadiusGeometry: _configMap[_currentStepIndex]
-                                ['borderRadius'] ??
-                            borderRadius,
+                        // Skipping through the intro very fast may cause currentStepIndex to out of bounds
+                        // I have tried to fix it, here is just to make the code safer
+                        // https://github.com/tal-tech/flutter_intro/issues/22
+                        borderRadiusGeometry: _currentStepIndex < stepCount
+                            ? _configMap[_currentStepIndex]['borderRadius'] ??
+                                borderRadius
+                            : borderRadius,
                       ),
                     ],
                   ),
                 ),
                 _DelayRenderedWidget(
-                  duration: noAnimation
-                      ? Duration(milliseconds: 0)
-                      : Duration(milliseconds: 200),
+                  duration: _animationDuration,
                   child: _stepWidget,
                 ),
               ],
@@ -250,15 +252,15 @@ class Intro {
   }
 
   void _onNext(BuildContext context) {
-    _currentStepIndex++;
-    if (_currentStepIndex < stepCount) {
+    if (_currentStepIndex + 1 < stepCount) {
+      _currentStepIndex++;
       _renderStep(context);
     }
   }
 
   void _onPrev(BuildContext context) {
-    _currentStepIndex--;
-    if (_currentStepIndex >= 0) {
+    if (_currentStepIndex - 1 >= 0) {
+      _currentStepIndex--;
       _renderStep(context);
     }
   }

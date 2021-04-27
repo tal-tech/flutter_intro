@@ -19,7 +19,7 @@ class _DelayRenderedWidget extends StatefulWidget {
   const _DelayRenderedWidget({
     Key? key,
     this.removed = false,
-    this.duration = const Duration(milliseconds: 200),
+    required this.duration,
     this.child,
     this.childPersist = false,
   }) : super(key: key);
