@@ -1,3 +1,7 @@
+## [2.2.1]
+
+* Rename `onHighlightWidgetOnTap` to `onHighlightWidgetTap`.
+
 ## [2.2.0]
 
 * Breaking update: move `maskClosable` to `Intro`.

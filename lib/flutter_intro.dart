@@ -80,7 +80,7 @@ class Intro {
   final int stepCount;
 
   /// The highlight widget tapped callback
-  final void Function(IntroStatus introStatus)? onHighlightWidgetOnTap;
+  final void Function(IntroStatus introStatus)? onHighlightWidgetTap;
 
   /// Create an Intro instance, the parameter [stepCount] is the number of guide pages
   /// [widgetBuilder] is the method of generating the guide page, and returns a [Widget] as the guide page
@@ -92,7 +92,7 @@ class Intro {
     this.maskClosable = false,
     this.borderRadius = const BorderRadius.all(Radius.circular(4)),
     this.padding = const EdgeInsets.all(8),
-    this.onHighlightWidgetOnTap,
+    this.onHighlightWidgetTap,
   }) : assert(stepCount > 0) {
     _animationDuration =
         noAnimation ? Duration(milliseconds: 0) : Duration(milliseconds: 300);
@@ -255,10 +255,10 @@ class Intro {
                             ? _configMap[_currentStepIndex]['borderRadius'] ??
                                 borderRadius
                             : borderRadius,
-                        onTap: onHighlightWidgetOnTap != null
+                        onTap: onHighlightWidgetTap != null
                             ? () {
                                 IntroStatus introStatus = getStatus();
-                                onHighlightWidgetOnTap!(introStatus);
+                                onHighlightWidgetTap!(introStatus);
                               }
                             : null,
                       ),

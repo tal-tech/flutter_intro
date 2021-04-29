@@ -102,7 +102,7 @@ class _MyHomePageState extends State<MyHomePage> {
       intro = Intro(
         stepCount: 4,
         maskClosable: true,
-        onHighlightWidgetOnTap: (introStatus) {
+        onHighlightWidgetTap: (introStatus) {
           print(introStatus);
         },
 
