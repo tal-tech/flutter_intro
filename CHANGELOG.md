@@ -1,3 +1,11 @@
+## [2.2.0]
+
+* Breaking update: move `maskClosable` to `Intro`.
+* Add `onHighlightWidgetOnTap` in `Intro`.
+* Add `currentStepIndex` in `IntroStatus`.
+* Fix the bug that when `maskClosable` is true, clicking on the highlighted widget will also trigger the event,
+  Now only click on the blank area of the mask will trigger the event.
+
 ## [2.1.1]
 
 * Fix bug.

@@ -62,6 +62,9 @@ class Intro {
   /// No animation
   final bool noAnimation;
 
+  // Click on whether the mask is allowed to be closed.
+  final bool maskClosable;
+
   /// The method of generating the content of the guide page,
   /// which will be called internally by [Intro] when the guide page appears.
   /// And will pass in some parameters on the current page through [StepWidgetParams]
@@ -76,6 +79,9 @@ class Intro {
   /// How many steps are there in total
   final int stepCount;
 
+  /// The highlight widget tapped callback
+  final void Function(IntroStatus introStatus)? onHighlightWidgetOnTap;
+
   /// Create an Intro instance, the parameter [stepCount] is the number of guide pages
   /// [widgetBuilder] is the method of generating the guide page, and returns a [Widget] as the guide page
   Intro({
@@ -83,8 +89,10 @@ class Intro {
     required this.stepCount,
     this.maskColor = const Color.fromRGBO(0, 0, 0, .6),
     this.noAnimation = false,
+    this.maskClosable = false,
     this.borderRadius = const BorderRadius.all(Radius.circular(4)),
     this.padding = const EdgeInsets.all(8),
+    this.onHighlightWidgetOnTap,
   }) : assert(stepCount > 0) {
     _animationDuration =
         noAnimation ? Duration(milliseconds: 0) : Duration(milliseconds: 300);
@@ -150,7 +158,7 @@ class Intro {
     );
   }
 
-  Widget _maskBuilder({
+  Widget _widgetBuilder({
     double? width,
     double? height,
     BlendMode? backgroundBlendMode,
@@ -160,6 +168,7 @@ class Intro {
     double? right,
     BorderRadiusGeometry? borderRadiusGeometry,
     Widget? child,
+    VoidCallback? onTap,
   }) {
     final decoration = BoxDecoration(
       color: Colors.white,
@@ -168,13 +177,16 @@ class Intro {
     );
     return AnimatedPositioned(
       duration: _animationDuration,
-      child: AnimatedContainer(
-        padding: padding,
-        decoration: decoration,
-        width: width,
-        height: height,
-        child: child,
-        duration: _animationDuration,
+      child: GestureDetector(
+        onTap: onTap,
+        child: AnimatedContainer(
+          padding: padding,
+          decoration: decoration,
+          width: width,
+          height: height,
+          child: child,
+          duration: _animationDuration,
+        ),
       ),
       left: left,
       top: top,
@@ -215,14 +227,23 @@ class Intro {
                   ),
                   child: Stack(
                     children: [
-                      _maskBuilder(
+                      _widgetBuilder(
                         backgroundBlendMode: BlendMode.dstOut,
                         left: 0,
                         top: 0,
                         right: 0,
                         bottom: 0,
+                        onTap: maskClosable
+                            ? () {
+                                if (stepCount - 1 == _currentStepIndex) {
+                                  _onFinish();
+                                } else {
+                                  _onNext(context);
+                                }
+                              }
+                            : null,
                       ),
-                      _maskBuilder(
+                      _widgetBuilder(
                         width: _widgetWidth,
                         height: _widgetHeight,
                         left: _widgetOffset!.dx,
@@ -234,6 +255,12 @@ class Intro {
                             ? _configMap[_currentStepIndex]['borderRadius'] ??
                                 borderRadius
                             : borderRadius,
+                        onTap: onHighlightWidgetOnTap != null
+                            ? () {
+                                IntroStatus introStatus = getStatus();
+                                onHighlightWidgetOnTap!(introStatus);
+                              }
+                            : null,
                       ),
                     ],
                   ),
@@ -330,6 +357,7 @@ class Intro {
     bool isOpen = _overlayEntry != null;
     IntroStatus introStatus = IntroStatus(
       isOpen: isOpen,
+      currentStepIndex: _currentStepIndex,
     );
     return introStatus;
   }
