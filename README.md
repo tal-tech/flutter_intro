@@ -25,6 +25,14 @@ Intro intro = Intro(
 
   /// The total number of guide pages, must be passed
   stepCount: 4,
+  
+  /// Click on whether the mask is allowed to be closed.
+  maskClosable: true,
+  
+  /// When highlight widget is tapped.
+  onHighlightWidgetTap: (introStatus) {
+    print(introStatus);
+  },
 
   /// The padding of the highlighted area and the widget
   padding: EdgeInsets.all(8),
@@ -46,8 +54,6 @@ Intro intro = Intro(
     buttonTextBuilder: (curr, total) {
       return curr < total - 1 ? 'Next' : 'Finish';
     },
-    /// Click on whether the mask is allowed to be closed.
-    maskClosable: true,
   ),
 );
 ```
