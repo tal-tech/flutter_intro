@@ -101,6 +101,10 @@ class _MyHomePageState extends State<MyHomePage> {
       /// init Intro
       intro = Intro(
         stepCount: 4,
+        maskClosable: true,
+        onHighlightWidgetOnTap: (introStatus) {
+          print(introStatus);
+        },
 
         /// use defaultTheme
         widgetBuilder: StepWidgetBuilder.useDefaultTheme(
@@ -113,14 +117,19 @@ class _MyHomePageState extends State<MyHomePage> {
           buttonTextBuilder: (currPage, totalPage) {
             return currPage < totalPage - 1 ? 'Next' : 'Finish';
           },
-          maskClosable: true,
         ),
+      );
+      intro.setStepConfig(
+        0,
+        borderRadius: BorderRadius.circular(64),
       );
     }
     if (mode == Mode.customTheme) {
       /// init Intro
       intro = Intro(
         stepCount: 4,
+
+        maskClosable: true,
 
         /// implement widgetBuilder function
         widgetBuilder: customThemeWidgetBuilder,
@@ -135,24 +144,52 @@ class _MyHomePageState extends State<MyHomePage> {
       'My usage is also very simple, you can quickly learn and use it through example and api documentation.',
       'In order to quickly implement the guidance, I also provide a set of out-of-the-box themes, I wish you all a happy use, goodbye!',
     ];
-    return Column(
-      children: [
-        Text(
-          texts[stepWidgetParams.currentStepIndex],
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 24,
+    return Padding(
+      padding: EdgeInsets.all(
+        32,
+      ),
+      child: Column(
+        children: [
+          SizedBox(
+            height: 40,
           ),
-        ),
-        ElevatedButton(
-          onPressed: stepWidgetParams.onNext != null
-              ? stepWidgetParams.onNext
-              : stepWidgetParams.onFinish,
-          child: Text(
-            'Next ${stepWidgetParams.currentStepIndex + 1} / ${stepWidgetParams.stepCount}',
+          Text(
+            '${texts[stepWidgetParams.currentStepIndex]}【${stepWidgetParams.currentStepIndex + 1} / ${stepWidgetParams.stepCount}】',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 16,
+            ),
           ),
-        ),
-      ],
+          Row(
+            children: [
+              ElevatedButton(
+                onPressed: stepWidgetParams.onPrev,
+                child: Text(
+                  'Prev',
+                ),
+              ),
+              SizedBox(
+                width: 16,
+              ),
+              ElevatedButton(
+                onPressed: stepWidgetParams.onNext,
+                child: Text(
+                  'Next',
+                ),
+              ),
+              SizedBox(
+                width: 16,
+              ),
+              ElevatedButton(
+                onPressed: stepWidgetParams.onFinish,
+                child: Text(
+                  'Finish',
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 
@@ -160,14 +197,14 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     Timer(
-        Duration(
-          milliseconds: 500,
-        ), () {
-      print('start');
-
-      /// start the intro
-      intro.start(context);
-    });
+      Duration(
+        milliseconds: 500,
+      ),
+      () {
+        /// start the intro
+        intro.start(context);
+      },
+    );
   }
 
   Widget build(BuildContext context) {
