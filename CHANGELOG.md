@@ -1,3 +1,7 @@
+## [2.3.0]
+
+* Add `useAdvancedTheme` in `StepWidgetBuilder`, you can customize the component style at will. 
+
 ## [2.2.1]
 
 * Rename `onHighlightWidgetOnTap` to `onHighlightWidgetTap`.

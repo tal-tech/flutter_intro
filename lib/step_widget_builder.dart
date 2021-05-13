@@ -17,6 +17,14 @@ part of flutter_intro;
 /// {@end-tool}
 ///
 class StepWidgetBuilder {
+  @visibleForTesting
+  static Map smartGetPosition({
+    required Size size,
+    required Size screenSize,
+    required Offset offset,
+  }) =>
+      _smartGetPosition(size: size, screenSize: screenSize, offset: offset);
+
   static Map _smartGetPosition({
     required Size size,
     required Size screenSize,
@@ -32,11 +40,13 @@ class StepWidgetBuilder {
     double leftArea = screenWidth - width - rightArea;
     Map position = Map();
     position['crossAxisAlignment'] = CrossAxisAlignment.start;
+
     if (topArea > bottomArea) {
       position['bottom'] = bottomArea + height + 16;
     } else {
       position['top'] = offset.dy + height + 12;
     }
+
     if (leftArea > rightArea) {
       position['right'] = rightArea <= 0 ? 16.0 : rightArea;
       position['crossAxisAlignment'] = CrossAxisAlignment.end;
@@ -64,6 +74,7 @@ class StepWidgetBuilder {
       position['crossAxisAlignment'] = CrossAxisAlignment.end;
       position['width'] = min<double>(position['width'], leftArea * 0.8);
     }
+
     return position;
   }
 
@@ -163,6 +174,39 @@ class StepWidgetBuilder {
                   ),
                 ],
               ),
+            ),
+            left: position['left'],
+            top: position['top'],
+            bottom: position['bottom'],
+            right: position['right'],
+          ),
+        ],
+      );
+    };
+  }
+
+  /// Use advanced theme.
+  ///
+  /// * [widgetBuilder] the widget returned by this method will be displayed on the screen.
+  /// it's worth noting that the maximum display width of the widget will be limited by the current screen width.
+  static Widget Function(StepWidgetParams params) useAdvancedTheme({
+    required Widget Function(StepWidgetParams params) widgetBuilder,
+  }) {
+    return (StepWidgetParams stepWidgetParams) {
+      Offset offset = stepWidgetParams.offset!;
+
+      Map position = _smartGetPosition(
+        screenSize: stepWidgetParams.screenSize,
+        size: stepWidgetParams.size,
+        offset: offset,
+      );
+
+      return Stack(
+        children: [
+          Positioned(
+            child: SizedBox(
+              width: position['width'],
+              child: widgetBuilder(stepWidgetParams),
             ),
             left: position['left'],
             top: position['top'],

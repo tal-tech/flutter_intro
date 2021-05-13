@@ -42,6 +42,8 @@ Intro intro = Intro(
 
   /// Use the default useDefaultTheme provided by the library to quickly build a guide page
   /// Need to customize the style and content of the guide page, implement the widgetBuilder method yourself
+  /// * Above version 2.3.0, you can use useAdvancedTheme to have more control over the style of the widget
+  /// * Please see https://github.com/tal-tech/flutter_intro/issues/26
   widgetBuilder: StepWidgetBuilder.useDefaultTheme(
     /// Guide page text
     texts: [

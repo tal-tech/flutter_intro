@@ -49,6 +49,23 @@ class StartPage extends StatelessWidget {
               height: 16,
             ),
             ElevatedButton(
+              child: Text('Start with useAdvancedTheme'),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (BuildContext context) => MyHomePage(
+                      title: 'Flutter Intro',
+                      mode: Mode.advancedTheme,
+                    ),
+                  ),
+                );
+              },
+            ),
+            SizedBox(
+              height: 16,
+            ),
+            ElevatedButton(
               child: Text('Start with customTheme'),
               onPressed: () {
                 Navigator.push(
@@ -72,6 +89,7 @@ class StartPage extends StatelessWidget {
 enum Mode {
   defaultTheme,
   customTheme,
+  advancedTheme,
 }
 
 class MyHomePage extends StatefulWidget {
@@ -116,6 +134,59 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
           buttonTextBuilder: (currPage, totalPage) {
             return currPage < totalPage - 1 ? 'Next' : 'Finish';
+          },
+        ),
+      );
+      intro.setStepConfig(
+        0,
+        borderRadius: BorderRadius.circular(64),
+      );
+    }
+    if (mode == Mode.advancedTheme) {
+      /// init Intro
+      intro = Intro(
+        stepCount: 4,
+        maskClosable: false,
+        onHighlightWidgetTap: (introStatus) {
+          print(introStatus);
+        },
+
+        /// useAdvancedTheme
+        widgetBuilder: StepWidgetBuilder.useAdvancedTheme(
+          widgetBuilder: (params) {
+            return Container(
+              decoration: BoxDecoration(
+                color: Colors.red.withOpacity(.6),
+              ),
+              child: Column(
+                children: [
+                  Text(
+                    '${params.currentStepIndex + 1}/${params.stepCount}',
+                    style: TextStyle(
+                      color: Colors.green,
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      ElevatedButton(
+                        onPressed: params.onPrev,
+                        child: Text('Prev'),
+                      ),
+                      ElevatedButton(
+                        onPressed: params.onNext,
+                        child: Text('Next'),
+                      ),
+                      ElevatedButton(
+                        onPressed: params.onFinish,
+                        child: Text('Finish'),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            );
           },
         ),
       );
