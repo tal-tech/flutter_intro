@@ -1,3 +1,7 @@
+## [2.3.1]
+
+* Throw a friendly error when something goes wrong.
+
 ## [2.3.0]
 
 * Add `useAdvancedTheme` in `StepWidgetBuilder`, you can customize the component style at will. 

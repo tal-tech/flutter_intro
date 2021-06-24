@@ -6,6 +6,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 part 'delay_rendered_widget.dart';
+part 'flutter_intro_exception.dart';
 part 'intro_status.dart';
 part 'step_widget_builder.dart';
 part 'step_widget_params.dart';
@@ -143,6 +144,13 @@ class Intro {
   }
 
   void _getWidgetInfo(GlobalKey globalKey) {
+    if (globalKey.currentContext == null) {
+      throw FlutterIntroException(
+        'The current context is null, because there is no widget in the tree that matches this global key.'
+        ' Please check whether the globalKey in intro.keys has forgotten to bind.',
+      );
+    }
+
     EdgeInsets? currentConfig = _configMap[_currentStepIndex]['padding'];
     RenderBox renderBox =
         globalKey.currentContext!.findRenderObject() as RenderBox;
