@@ -7,7 +7,7 @@ class _Throttling {
   Timer? _timer;
 
   _Throttling({Duration duration = const Duration(seconds: 1)})
-      : assert(duration is Duration && !duration.isNegative) {
+      : assert(!duration.isNegative) {
     _duration = duration;
   }
 
