@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 part 'delay_rendered_widget.dart';
 part 'flutter_intro_exception.dart';
 part 'intro_status.dart';
+part 'intro_step_builder.dart';
 part 'step_widget_builder.dart';
 part 'step_widget_params.dart';
 part 'throttling.dart';
@@ -205,7 +206,6 @@ class Intro {
 
   void _showOverlay(
     BuildContext context,
-    GlobalKey globalKey,
   ) {
     _overlayEntry = new OverlayEntry(
       builder: (BuildContext context) {
@@ -351,7 +351,6 @@ class Intro {
     _createStepWidget(context);
     _showOverlay(
       context,
-      _globalKeys[_currentStepIndex],
     );
   }
 
@@ -368,5 +367,338 @@ class Intro {
       currentStepIndex: _currentStepIndex,
     );
     return introStatus;
+  }
+}
+
+class IntroKey {
+  final int order;
+  final GlobalKey key;
+  bool finished = false;
+  final String? simpleText;
+
+  IntroKey({
+    required this.order,
+    this.simpleText,
+    required this.key,
+  });
+
+  @override
+  String toString() {
+    return 'IntroKey(order: $order, finished: $finished)';
+  }
+}
+
+class FlutterIntro extends InheritedWidget {
+  final List<IntroKey> _keys = [];
+  static BuildContext? _context;
+  static OverlayEntry? _overlayEntry;
+  static bool _removed = false;
+  static Size _screenSize = Size(0, 0);
+  static Widget _overlayWidget = SizedBox.shrink();
+
+  static IntroKey? _currentIntroKey;
+
+  static Size _widgetSize = Size(0, 0);
+  static Offset _widgetOffset = Offset(0, 0);
+
+  late final Duration _animationDuration;
+
+  /// [Widget] [padding] of the selected area, the default is [EdgeInsets.all(8)]
+  final EdgeInsets padding;
+
+  /// [Widget] [borderRadius] of the selected area, the default is [BorderRadius.all(Radius.circular(4))]
+  final BorderRadiusGeometry borderRadius;
+
+  /// The mask color of step page
+  final Color maskColor;
+
+  /// No animation
+  final bool noAnimation;
+
+  final _th = _Throttling(duration: Duration(milliseconds: 500));
+
+  final String Function(
+    int order,
+
+    /// start from 0
+    int current,
+    int total,
+  ) buttonTextBuilder;
+
+  FlutterIntro({
+    this.padding = const EdgeInsets.all(8),
+    this.borderRadius = const BorderRadius.all(Radius.circular(4)),
+    this.maskColor = const Color.fromRGBO(0, 0, 0, .6),
+    this.noAnimation = false,
+    required this.buttonTextBuilder,
+    required Widget child,
+  }) : super(child: child) {
+    _animationDuration =
+        noAnimation ? Duration(milliseconds: 0) : Duration(milliseconds: 300);
+  }
+
+  static FlutterIntro? of(BuildContext context) {
+    _context = context;
+    return context.dependOnInheritedWidgetOfExactType<FlutterIntro>();
+  }
+
+  IntroKey? _getNextIntroKey({
+    bool isUpdate = false,
+  }) {
+    if (isUpdate) {
+      return _currentIntroKey;
+    }
+    _keys.sort((a, b) => a.order - b.order);
+    final key = _keys.cast<IntroKey?>().firstWhere(
+          (e) => !e!.finished,
+          orElse: () => null,
+        );
+    _currentIntroKey = key;
+    return key;
+  }
+
+  Widget _widgetBuilder({
+    double? width,
+    double? height,
+    BlendMode? backgroundBlendMode,
+    required double left,
+    required double top,
+    double? bottom,
+    double? right,
+    BorderRadiusGeometry? borderRadiusGeometry,
+    Widget? child,
+    VoidCallback? onTap,
+  }) {
+    final decoration = BoxDecoration(
+      color: Colors.white,
+      backgroundBlendMode: backgroundBlendMode,
+      borderRadius: borderRadiusGeometry,
+    );
+    return AnimatedPositioned(
+      duration: _animationDuration,
+      child: GestureDetector(
+        onTap: onTap,
+        child: AnimatedContainer(
+          padding: padding,
+          decoration: decoration,
+          width: width,
+          height: height,
+          child: child,
+          duration: _animationDuration,
+        ),
+      ),
+      left: left,
+      top: top,
+      bottom: bottom,
+      right: right,
+    );
+  }
+
+  void _onFinish() {
+    if (_overlayEntry == null) return;
+
+    _removed = true;
+    _overlayEntry!.markNeedsBuild();
+    Timer(_animationDuration, () {
+      if (_overlayEntry == null) return;
+      _overlayEntry!.remove();
+      _overlayEntry = null;
+    });
+  }
+
+  void _render({
+    bool isUpdate = false,
+  }) {
+    IntroKey? introKey = _getNextIntroKey(
+      isUpdate: isUpdate,
+    );
+
+    if (introKey == null) {
+      _onFinish();
+      return;
+    }
+
+    if (introKey.key.currentContext == null) {
+      throw FlutterIntroException(
+        'The current context is null, because there is no widget in the tree that matches this global key.'
+        ' Please check whether the key in builder has forgotten to bind.',
+      );
+    }
+
+    RenderBox renderBox =
+        introKey.key.currentContext!.findRenderObject() as RenderBox;
+
+    _screenSize = MediaQuery.of(_context!).size;
+    _widgetSize = Size(
+      renderBox.size.width + padding.horizontal,
+      renderBox.size.height + padding.vertical,
+    );
+    _widgetOffset = Offset(
+      renderBox.localToGlobal(Offset.zero).dx - padding.left,
+      renderBox.localToGlobal(Offset.zero).dy - padding.top,
+    );
+
+    Map position = StepWidgetBuilder._smartGetPosition(
+      screenSize: _screenSize,
+      size: _widgetSize,
+      offset: _widgetOffset,
+    );
+
+    if (introKey.simpleText != null) {
+      _overlayWidget = Stack(
+        children: [
+          Positioned(
+            child: Container(
+              width: position['width'],
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: position['crossAxisAlignment'],
+                children: [
+                  Text(
+                    introKey.simpleText!,
+                    softWrap: true,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      height: 1.4,
+                      color: Colors.white,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 12,
+                  ),
+                  SizedBox(
+                    height: 28,
+                    child: OutlinedButton(
+                      style: ButtonStyle(
+                        foregroundColor: MaterialStateProperty.all<Color>(
+                          Colors.white,
+                        ),
+                        overlayColor: MaterialStateProperty.all<Color>(
+                          Colors.white.withOpacity(0.1),
+                        ),
+                        side: MaterialStateProperty.all<BorderSide>(
+                          BorderSide(
+                            color: Colors.white,
+                          ),
+                        ),
+                        padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                          EdgeInsets.symmetric(
+                            vertical: 0,
+                            horizontal: 8,
+                          ),
+                        ),
+                        shape: MaterialStateProperty.all<OutlinedBorder>(
+                          StadiumBorder(),
+                        ),
+                      ),
+                      onPressed: () {
+                        _render();
+                      },
+                      child: Text(
+                        buttonTextBuilder(
+                          introKey.order,
+                          _keys.where((e) => e.finished).length,
+                          _keys.length,
+                        ),
+                        style: TextStyle(
+                          fontSize: 12,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            left: position['left'],
+            top: position['top'],
+            bottom: position['bottom'],
+            right: position['right'],
+          ),
+        ],
+      );
+      introKey.finished = true;
+    }
+
+    if (_overlayEntry == null) {
+      _createOverlay();
+    } else {
+      _overlayEntry!.markNeedsBuild();
+    }
+  }
+
+  void _createOverlay() {
+    _overlayEntry = new OverlayEntry(
+      builder: (BuildContext context) {
+        Size currentScreenSize = MediaQuery.of(context).size;
+
+        if (_screenSize.width != currentScreenSize.width ||
+            _screenSize.height != currentScreenSize.height) {
+          _screenSize = currentScreenSize;
+
+          _th.throttle(() {
+            _render(
+              isUpdate: true,
+            );
+          });
+        }
+
+        return _DelayRenderedWidget(
+          removed: _removed,
+          childPersist: true,
+          duration: _animationDuration,
+          child: Material(
+            color: Colors.transparent,
+            child: Stack(
+              children: [
+                ColorFiltered(
+                  colorFilter: ColorFilter.mode(
+                    maskColor,
+                    BlendMode.srcOut,
+                  ),
+                  child: Stack(
+                    children: [
+                      _widgetBuilder(
+                        backgroundBlendMode: BlendMode.dstOut,
+                        left: 0,
+                        top: 0,
+                        right: 0,
+                        bottom: 0,
+                        onTap: null,
+                      ),
+                      _widgetBuilder(
+                        width: _widgetSize.width,
+                        height: _widgetSize.height,
+                        left: _widgetOffset.dx,
+                        top: _widgetOffset.dy,
+                        // Skipping through the intro very fast may cause currentStepIndex to out of bounds
+                        // I have tried to fix it, here is just to make the code safer
+                        // https://github.com/tal-tech/flutter_intro/issues/22
+                        borderRadiusGeometry: borderRadius,
+                        onTap: null,
+                      ),
+                    ],
+                  ),
+                ),
+                _DelayRenderedWidget(
+                  duration: _animationDuration,
+                  child: _overlayWidget,
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+    Overlay.of(_context!)!.insert(_overlayEntry!);
+  }
+
+  void start() {
+    _render();
+  }
+
+  @override
+  bool updateShouldNotify(FlutterIntro oldWidget) {
+    return false;
   }
 }
