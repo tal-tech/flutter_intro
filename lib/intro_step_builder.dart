@@ -16,19 +16,36 @@ class IntroStepBuilder extends StatefulWidget {
   /// And will pass in some parameters on the current page through [StepWidgetParams]
   final Widget Function(StepWidgetParams params)? overlayBuilder;
 
-  final String? simpleText;
+  /// When highlight widget is tapped
+  final VoidCallback? onHighlightWidgetTap;
+
+  /// [Widget] [borderRadius] of the selected area, the default is [BorderRadius.all(Radius.circular(4))]
+  final BorderRadiusGeometry? borderRadius;
+
+  /// [Widget] [padding] of the selected area, the default is [EdgeInsets.all(8)]
+  final EdgeInsets? padding;
+
+  final String? text;
 
   IntroStepBuilder({
     Key? key,
     required this.order,
     required this.builder,
-    this.simpleText,
+    this.text,
     this.overlayBuilder,
-  })  : assert(simpleText != null || overlayBuilder != null),
+    this.borderRadius,
+    this.onHighlightWidgetTap,
+    this.padding,
+  })  : assert(text != null || overlayBuilder != null),
         super(key: key);
 
   @override
   State<IntroStepBuilder> createState() => _IntroStepBuilderState();
+
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'IntroStepBuilder(order: $order)';
+  }
 }
 
 class _IntroStepBuilderState extends State<IntroStepBuilder> {
@@ -36,15 +53,11 @@ class _IntroStepBuilderState extends State<IntroStepBuilder> {
   void didChangeDependencies() {
     super.didChangeDependencies();
 
-    FlutterIntro? flutterIntro = FlutterIntro.of(context);
+    Intro? flutterIntro = Intro.of(context);
 
     if (flutterIntro != null &&
-        flutterIntro._keys.indexWhere((e) => e.key == widget._key) == -1) {
-      flutterIntro._keys.add(IntroKey(
-        key: widget._key,
-        order: widget.order,
-        simpleText: widget.simpleText,
-      ));
+        !flutterIntro._introStepBuilderList.contains(widget)) {
+      flutterIntro._introStepBuilderList.add(widget);
     }
   }
 
