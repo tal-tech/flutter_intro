@@ -4,6 +4,8 @@
 
 A better way for new feature introduction and step-by-step users guide for your Flutter project.
 
+# Since I no longer work at Tal, the repository has been moved to [https://github.com/minaxorg/flutter_intro](https://github.com/minaxorg/flutter_intro)
+
 <img src='https://raw.githubusercontent.com/tal-tech/flutter_intro/master/doc/example1.gif' width='300' />
 
 Automatically adapt when the device screen orientation is switched.
