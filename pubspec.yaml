@@ -1,7 +1,7 @@
 name: flutter_intro
 description: A better way for new feature introduction and step-by-step users guide for your Flutter project.
-version: 2.3.1
-homepage: https://github.com/tal-tech/flutter_intro
+version: 3.0.0
+homepage: https://github.com/minaxorg/flutter_intro
 
 environment:
   sdk: '>=2.12.0 <3.0.0'

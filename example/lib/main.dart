@@ -1,7 +1,8 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_intro/flutter_intro.dart';
+import 'package:intro/advanced_usage.dart';
+import 'package:intro/demo_usage.dart';
+import 'package:intro/simple_usage.dart';
 
 void main() {
   runApp(const MyApp());
@@ -36,48 +37,45 @@ class StartPage extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             ElevatedButton(
-              child: const Text('Start with useDefaultTheme'),
               onPressed: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (BuildContext context) => const MyHomePage(
-                      title: 'Flutter Intro',
-                      mode: Mode.defaultTheme,
+                    builder: (BuildContext context) => Intro(
+                      padding: EdgeInsets.zero,
+                      borderRadius: const BorderRadius.all(Radius.circular(4)),
+                      maskColor: const Color.fromRGBO(0, 0, 0, .6),
+                      child: const DemoUsage(),
                     ),
                   ),
                 );
               },
-            ),
-            const SizedBox(
-              height: 16,
+              child: const Text('Demo'),
             ),
             ElevatedButton(
-              child: const Text('Start with useAdvancedTheme'),
               onPressed: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (BuildContext context) => const MyHomePage(
-                      title: 'Flutter Intro',
-                      mode: Mode.advancedTheme,
+                    builder: (BuildContext context) => Intro(
+                      buttonTextBuilder: (order) =>
+                          order == 3 ? 'Custom Button Text' : 'Next',
+                      child: const SimpleUsage(),
                     ),
                   ),
                 );
               },
-            ),
-            const SizedBox(
-              height: 16,
+              child: const Text('Simple Usage'),
             ),
             ElevatedButton(
-              child: const Text('Start with customTheme'),
+              child: const Text('Advanced Usage'),
               onPressed: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (BuildContext context) => const MyHomePage(
-                      title: 'Flutter Intro',
-                      mode: Mode.customTheme,
+                    builder: (BuildContext context) => Intro(
+                      maskClosable: true,
+                      child: const AdvancedUsage(),
                     ),
                   ),
                 );
@@ -86,266 +84,6 @@ class StartPage extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-}
-
-enum Mode {
-  defaultTheme,
-  customTheme,
-  advancedTheme,
-}
-
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({
-    Key? key,
-    required this.title,
-    required this.mode,
-  }) : super(key: key);
-
-  final String title;
-
-  final Mode mode;
-
-  @override
-  _MyHomePageState createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
-  late Intro intro;
-
-  Widget customThemeWidgetBuilder(StepWidgetParams stepWidgetParams) {
-    List<String> texts = [
-      'Hello, I\'m Flutter Intro.',
-      'I can help you quickly implement the Step By Step guide in the Flutter project.',
-      'My usage is also very simple, you can quickly learn and use it through example and api documentation.',
-      'In order to quickly implement the guidance, I also provide a set of out-of-the-box themes, I wish you all a happy use, goodbye!',
-    ];
-    return Padding(
-      padding: const EdgeInsets.all(
-        32,
-      ),
-      child: Column(
-        children: [
-          const SizedBox(
-            height: 40,
-          ),
-          Text(
-            '${texts[stepWidgetParams.currentStepIndex]}【${stepWidgetParams.currentStepIndex + 1} / ${stepWidgetParams.stepCount}】',
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 16,
-            ),
-          ),
-          Row(
-            children: [
-              ElevatedButton(
-                onPressed: stepWidgetParams.onPrev,
-                child: const Text(
-                  'Prev',
-                ),
-              ),
-              const SizedBox(
-                width: 16,
-              ),
-              ElevatedButton(
-                onPressed: stepWidgetParams.onNext,
-                child: const Text(
-                  'Next',
-                ),
-              ),
-              const SizedBox(
-                width: 16,
-              ),
-              ElevatedButton(
-                onPressed: stepWidgetParams.onFinish,
-                child: const Text(
-                  'Finish',
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    if (widget.mode == Mode.defaultTheme) {
-      /// init Intro
-      intro = Intro(
-        stepCount: 4,
-        maskClosable: true,
-        onHighlightWidgetTap: (introStatus) {
-          print(introStatus);
-        },
-
-        /// use defaultTheme
-        widgetBuilder: StepWidgetBuilder.useDefaultTheme(
-          texts: [
-            'Hello, I\'m Flutter Intro.',
-            'I can help you quickly implement the Step By Step guide in the Flutter project.',
-            'My usage is also very simple, you can quickly learn and use it through example and api documentation.',
-            'In order to quickly implement the guidance, I also provide a set of out-of-the-box themes, I wish you all a happy use, goodbye!',
-          ],
-          buttonTextBuilder: (currPage, totalPage) {
-            return currPage < totalPage - 1 ? 'Next' : 'Finish';
-          },
-        ),
-      );
-      intro.setStepConfig(
-        0,
-        borderRadius: BorderRadius.circular(64),
-      );
-    }
-    if (widget.mode == Mode.advancedTheme) {
-      /// init Intro
-      intro = Intro(
-        stepCount: 4,
-        maskClosable: false,
-        onHighlightWidgetTap: (introStatus) {
-          print(introStatus);
-        },
-
-        /// useAdvancedTheme
-        widgetBuilder: StepWidgetBuilder.useAdvancedTheme(
-          widgetBuilder: (params) {
-            return Container(
-              decoration: BoxDecoration(
-                color: Colors.red.withOpacity(.6),
-              ),
-              child: Column(
-                children: [
-                  Text(
-                    '${params.currentStepIndex + 1}/${params.stepCount}',
-                    style: const TextStyle(
-                      color: Colors.green,
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Row(
-                    children: [
-                      ElevatedButton(
-                        onPressed: params.onPrev,
-                        child: const Text('Prev'),
-                      ),
-                      ElevatedButton(
-                        onPressed: params.onNext,
-                        child: const Text('Next'),
-                      ),
-                      ElevatedButton(
-                        onPressed: params.onFinish,
-                        child: const Text('Finish'),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            );
-          },
-        ),
-      );
-      intro.setStepConfig(
-        0,
-        borderRadius: BorderRadius.circular(64),
-      );
-    }
-    if (widget.mode == Mode.customTheme) {
-      /// init Intro
-      intro = Intro(
-        stepCount: 4,
-
-        maskClosable: true,
-
-        /// implement widgetBuilder function
-        widgetBuilder: customThemeWidgetBuilder,
-      );
-    }
-
-    Timer(
-      const Duration(
-        milliseconds: 500,
-      ),
-      () {
-        /// start the intro
-        intro.start(context);
-      },
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return WillPopScope(
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text(widget.title),
-        ),
-        body: SingleChildScrollView(
-          child: Container(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
-                  width: 100,
-                  child: Placeholder(
-                    /// 2nd guide
-                    key: intro.keys[1],
-                    fallbackHeight: 100,
-                  ),
-                ),
-                const SizedBox(
-                  height: 16,
-                ),
-                Placeholder(
-                  /// 3rd guide
-                  key: intro.keys[2],
-                  fallbackHeight: 100,
-                ),
-                const SizedBox(
-                  height: 16,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    SizedBox(
-                      width: 100,
-                      child: Placeholder(
-                        /// 4th guide
-                        key: intro.keys[3],
-                        fallbackHeight: 100,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ),
-        floatingActionButton: FloatingActionButton(
-          /// 1st guide
-          key: intro.keys[0],
-          child: const Icon(
-            Icons.play_arrow,
-          ),
-          onPressed: () {
-            intro.start(context);
-          },
-        ),
-      ),
-      onWillPop: () async {
-        // sometimes you need get current status
-        IntroStatus introStatus = intro.getStatus();
-        if (introStatus.isOpen) {
-          // destroy guide page when tap back key
-          intro.dispose();
-          return false;
-        }
-        return true;
-      },
     );
   }
 }

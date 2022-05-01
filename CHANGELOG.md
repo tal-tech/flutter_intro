@@ -1,3 +1,7 @@
+## [3.0.0-dev.2]
+
+* Prerelease, No documentation yet.
+
 ## [2.3.1]
 
 * Throw a friendly error when something goes wrong.

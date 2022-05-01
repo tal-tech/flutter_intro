@@ -7,69 +7,28 @@ import 'package:flutter/material.dart';
 
 part 'delay_rendered_widget.dart';
 part 'flutter_intro_exception.dart';
+part 'intro_button.dart';
 part 'intro_status.dart';
+part 'intro_step_builder.dart';
+part 'overlay_position.dart';
 part 'step_widget_builder.dart';
 part 'step_widget_params.dart';
 part 'throttling.dart';
 
-/// Flutter Intro main class
-///
-/// Pass in [stepCount] when instantiating [Intro] object, and [widgetBuilder]
-/// Obtain [GlobalKey] from [Intro.keys] and add it to the [Widget] where you need to add a guide page
-/// Finally execute the [start] method, the parameter is the current [BuildContext], you can
-///
-/// {@tool snippet}
-/// ```dart
-/// final Intro intro = Intro(
-///   stepCount: 4,
-///   widgetBuilder: widgetBuilder,
-/// );
-///
-/// Container(
-///   key: intro.keys[0],
-/// );
-/// Text(
-///   'need focus widget',
-///   key: intro.keys[1],
-/// );
-///
-/// intro.start(context);
-/// ```
-/// {@end-tool}
-///
-class Intro {
-  bool _removed = false;
-  double? _widgetWidth;
-  double? _widgetHeight;
-  Offset? _widgetOffset;
-  OverlayEntry? _overlayEntry;
-  int _currentStepIndex = 0;
-  Widget? _stepWidget;
-  List<Map> _configMap = [];
-  List<GlobalKey> _globalKeys = [];
-  late Duration _animationDuration;
-  late Size _lastScreenSize;
+class Intro extends InheritedWidget {
+  static BuildContext? _context;
+  static OverlayEntry? _overlayEntry;
+  static bool _removed = false;
+  static Size _screenSize = Size(0, 0);
+  static Widget _overlayWidget = SizedBox.shrink();
+  static IntroStepBuilder? _currentIntroStepBuilder;
+  static Size _widgetSize = Size(0, 0);
+  static Offset _widgetOffset = Offset(0, 0);
+
   final _th = _Throttling(duration: Duration(milliseconds: 500));
-
-  /// The mask color of step page
-  final Color maskColor;
-
-  /// Current step page index
-  /// 2021-03-31 @caden
-  /// I don’t remember why this parameter was exposed at the time,
-  /// it seems to be useless, and there is a bug in this one, so let’s block it temporarily.
-  // int get currentStepIndex => _currentStepIndex;
-
-  /// No animation
-  final bool noAnimation;
-
-  // Click on whether the mask is allowed to be closed.
-  final bool maskClosable;
-
-  /// The method of generating the content of the guide page,
-  /// which will be called internally by [Intro] when the guide page appears.
-  /// And will pass in some parameters on the current page through [StepWidgetParams]
-  final Widget Function(StepWidgetParams params) widgetBuilder;
+  final List<IntroStepBuilder> _introStepBuilderList = [];
+  final List<IntroStepBuilder> _finishedIntroStepBuilderList = [];
+  late final Duration _animationDuration;
 
   /// [Widget] [padding] of the selected area, the default is [EdgeInsets.all(8)]
   final EdgeInsets padding;
@@ -77,93 +36,82 @@ class Intro {
   /// [Widget] [borderRadius] of the selected area, the default is [BorderRadius.all(Radius.circular(4))]
   final BorderRadiusGeometry borderRadius;
 
-  /// How many steps are there in total
-  final int stepCount;
+  /// The mask color of step page
+  final Color maskColor;
 
-  /// The highlight widget tapped callback
-  final void Function(IntroStatus introStatus)? onHighlightWidgetTap;
+  /// No animation
+  final bool noAnimation;
 
-  /// Create an Intro instance, the parameter [stepCount] is the number of guide pages
-  /// [widgetBuilder] is the method of generating the guide page, and returns a [Widget] as the guide page
+  /// Click on whether the mask is allowed to be closed.
+  final bool maskClosable;
+
+  /// [order] order
+  final String Function(
+    int order,
+  )? buttonTextBuilder;
+
   Intro({
-    required this.widgetBuilder,
-    required this.stepCount,
+    this.padding = const EdgeInsets.all(8),
+    this.borderRadius = const BorderRadius.all(Radius.circular(4)),
     this.maskColor = const Color.fromRGBO(0, 0, 0, .6),
     this.noAnimation = false,
     this.maskClosable = false,
-    this.borderRadius = const BorderRadius.all(Radius.circular(4)),
-    this.padding = const EdgeInsets.all(8),
-    this.onHighlightWidgetTap,
-  }) : assert(stepCount > 0) {
+    this.buttonTextBuilder,
+    required Widget child,
+  }) : super(child: child) {
     _animationDuration =
         noAnimation ? Duration(milliseconds: 0) : Duration(milliseconds: 300);
-    for (int i = 0; i < stepCount; i++) {
-      _globalKeys.add(GlobalKey());
-      _configMap.add({});
+  }
+
+  IntroStatus get status => IntroStatus(isOpen: _overlayEntry != null);
+
+  bool get hasNextStep =>
+      _currentIntroStepBuilder == null ||
+      _introStepBuilderList.where(
+            (element) {
+              return element.order > _currentIntroStepBuilder!.order;
+            },
+          ).length >
+          0;
+
+  bool get hasPrevStep =>
+      _finishedIntroStepBuilderList
+          .indexWhere((element) => element == _currentIntroStepBuilder) >
+      0;
+
+  IntroStepBuilder? _getNextIntroStepBuilder({
+    bool isUpdate = false,
+  }) {
+    if (isUpdate) {
+      return _currentIntroStepBuilder;
+    }
+    int index = _finishedIntroStepBuilderList
+        .indexWhere((element) => element == _currentIntroStepBuilder);
+    if (index != _finishedIntroStepBuilderList.length - 1) {
+      return _finishedIntroStepBuilderList[index + 1];
+    } else {
+      _introStepBuilderList.sort((a, b) => a.order - b.order);
+      final introStepBuilder =
+          _introStepBuilderList.cast<IntroStepBuilder?>().firstWhere(
+                (e) => !_finishedIntroStepBuilderList.contains(e),
+                orElse: () => null,
+              );
+      return introStepBuilder;
     }
   }
 
-  List<GlobalKey> get keys => _globalKeys;
-
-  /// Set the configuration of the specified number of steps
-  ///
-  /// [stepIndex] Which step of configuration needs to be modified
-  /// [padding] Padding setting
-  /// [borderRadius] BorderRadius setting
-  void setStepConfig(
-    int stepIndex, {
-    EdgeInsets? padding,
-    BorderRadiusGeometry? borderRadius,
+  IntroStepBuilder? _getPrevIntroStepBuilder({
+    bool isUpdate = false,
   }) {
-    assert(stepIndex >= 0 && stepIndex < stepCount);
-    _configMap[stepIndex] = {
-      'padding': padding,
-      'borderRadius': borderRadius,
-    };
-  }
-
-  /// Set the configuration of multiple steps
-  ///
-  /// [stepsIndex] Which steps of configuration needs to be modified
-  /// [padding] Padding setting
-  /// [borderRadius] BorderRadius setting
-  void setStepsConfig(
-    List<int> stepsIndex, {
-    EdgeInsets? padding,
-    BorderRadiusGeometry? borderRadius,
-  }) {
-    assert(stepsIndex
-        .every((stepIndex) => stepIndex >= 0 && stepIndex < stepCount));
-    stepsIndex.forEach((index) {
-      setStepConfig(
-        index,
-        padding: padding,
-        borderRadius: borderRadius,
-      );
-    });
-  }
-
-  void _getWidgetInfo(GlobalKey globalKey) {
-    if (globalKey.currentContext == null) {
-      throw FlutterIntroException(
-        'The current context is null, because there is no widget in the tree that matches this global key.'
-        ' Please check whether the globalKey in intro.keys has forgotten to bind.',
-      );
+    if (isUpdate) {
+      return _currentIntroStepBuilder;
     }
-
-    EdgeInsets? currentConfig = _configMap[_currentStepIndex]['padding'];
-    RenderBox renderBox =
-        globalKey.currentContext!.findRenderObject() as RenderBox;
-    _widgetWidth = renderBox.size.width +
-        (currentConfig?.horizontal ?? padding.horizontal);
-    _widgetHeight =
-        renderBox.size.height + (currentConfig?.vertical ?? padding.vertical);
-    _widgetOffset = Offset(
-      renderBox.localToGlobal(Offset.zero).dx -
-          (currentConfig?.left ?? padding.left),
-      renderBox.localToGlobal(Offset.zero).dy -
-          (currentConfig?.top ?? padding.top),
-    );
+    int index = _finishedIntroStepBuilderList
+        .indexWhere((element) => element == _currentIntroStepBuilder);
+    if (index > 0) {
+      return _finishedIntroStepBuilderList[index - 1];
+    }
+    return null;
   }
 
   Widget _widgetBuilder({
@@ -203,20 +151,164 @@ class Intro {
     );
   }
 
-  void _showOverlay(
-    BuildContext context,
-    GlobalKey globalKey,
-  ) {
+  void _onFinish() {
+    if (_overlayEntry == null) return;
+
+    _removed = true;
+    _overlayEntry!.markNeedsBuild();
+    Timer(_animationDuration, () {
+      if (_overlayEntry == null) return;
+      _overlayEntry!.remove();
+      _removed = false;
+      _overlayEntry = null;
+      _introStepBuilderList.clear();
+      _finishedIntroStepBuilderList.clear();
+    });
+  }
+
+  void _render({
+    bool isUpdate = false,
+    bool reverse = false,
+  }) {
+    IntroStepBuilder? introStepBuilder = reverse
+        ? _getPrevIntroStepBuilder(
+            isUpdate: isUpdate,
+          )
+        : _getNextIntroStepBuilder(
+            isUpdate: isUpdate,
+          );
+    _currentIntroStepBuilder = introStepBuilder;
+
+    if (introStepBuilder == null) {
+      _onFinish();
+      return;
+    }
+
+    if (introStepBuilder._key.currentContext == null) {
+      throw FlutterIntroException(
+        'The current context is null, because there is no widget in the tree that matches this global key.'
+        ' Please check whether the key in IntroStepBuilder(order: ${introStepBuilder.order}) has forgotten to bind.'
+        ' If you are already bound, it means you have encountered a bug, please let me know.',
+      );
+    }
+
+    RenderBox renderBox =
+        introStepBuilder._key.currentContext!.findRenderObject() as RenderBox;
+
+    _screenSize = MediaQuery.of(_context!).size;
+    _widgetSize = Size(
+      renderBox.size.width +
+          (introStepBuilder.padding?.horizontal ?? padding.horizontal),
+      renderBox.size.height +
+          (introStepBuilder.padding?.vertical ?? padding.vertical),
+    );
+    _widgetOffset = Offset(
+      renderBox.localToGlobal(Offset.zero).dx -
+          (introStepBuilder.padding?.left ?? padding.left),
+      renderBox.localToGlobal(Offset.zero).dy -
+          (introStepBuilder.padding?.top ?? padding.top),
+    );
+
+    OverlayPosition position = _StepWidgetBuilder.getOverlayPosition(
+      screenSize: _screenSize,
+      size: _widgetSize,
+      offset: _widgetOffset,
+    );
+
+    if (!_finishedIntroStepBuilderList.contains(introStepBuilder)) {
+      _finishedIntroStepBuilderList.add(introStepBuilder);
+    }
+
+    if (introStepBuilder.overlayBuilder != null) {
+      _overlayWidget = Stack(
+        children: [
+          Positioned(
+            child: SizedBox(
+              child: introStepBuilder.overlayBuilder!(
+                StepWidgetParams(
+                  order: introStepBuilder.order,
+                  onNext: hasNextStep ? _render : null,
+                  onPrev: hasPrevStep
+                      ? () {
+                          _render(reverse: true);
+                        }
+                      : null,
+                  onFinish: _onFinish,
+                  screenSize: _screenSize,
+                  size: _widgetSize,
+                  offset: _widgetOffset,
+                ),
+              ),
+            ),
+            width: position.width,
+            left: position.left,
+            top: position.top,
+            bottom: position.bottom,
+            right: position.right,
+          ),
+        ],
+      );
+    } else if (introStepBuilder.text != null) {
+      _overlayWidget = Stack(
+        children: [
+          Positioned(
+            child: SizedBox(
+              width: position.width,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: position.crossAxisAlignment,
+                children: [
+                  Text(
+                    introStepBuilder.text!,
+                    softWrap: true,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      height: 1.4,
+                      color: Colors.white,
+                    ),
+                  ),
+                  SizedBox(
+                    height: 12,
+                  ),
+                  IntroButton(
+                    text: buttonTextBuilder == null
+                        ? 'Next'
+                        : buttonTextBuilder!(introStepBuilder.order),
+                    onPressed: _render,
+                  ),
+                ],
+              ),
+            ),
+            left: position.left,
+            top: position.top,
+            bottom: position.bottom,
+            right: position.right,
+          ),
+        ],
+      );
+    }
+
+    if (_overlayEntry == null) {
+      _createOverlay();
+    } else {
+      _overlayEntry!.markNeedsBuild();
+    }
+  }
+
+  void _createOverlay() {
     _overlayEntry = new OverlayEntry(
       builder: (BuildContext context) {
-        Size screenSize = MediaQuery.of(context).size;
+        Size currentScreenSize = MediaQuery.of(context).size;
 
-        if (screenSize.width != _lastScreenSize.width ||
-            screenSize.height != _lastScreenSize.height) {
-          _lastScreenSize = screenSize;
+        if (_screenSize.width != currentScreenSize.width ||
+            _screenSize.height != currentScreenSize.height) {
+          _screenSize = currentScreenSize;
+
           _th.throttle(() {
-            _createStepWidget(context);
-            _overlayEntry!.markNeedsBuild();
+            _render(
+              isUpdate: true,
+            );
           });
         }
 
@@ -243,39 +335,31 @@ class Intro {
                         bottom: 0,
                         onTap: maskClosable
                             ? () {
-                                if (stepCount - 1 == _currentStepIndex) {
-                                  _onFinish();
-                                } else {
-                                  _onNext(context);
-                                }
+                                Future.delayed(
+                                  const Duration(milliseconds: 200),
+                                  () {
+                                    _render();
+                                  },
+                                );
                               }
                             : null,
                       ),
                       _widgetBuilder(
-                        width: _widgetWidth,
-                        height: _widgetHeight,
-                        left: _widgetOffset!.dx,
-                        top: _widgetOffset!.dy,
-                        // Skipping through the intro very fast may cause currentStepIndex to out of bounds
-                        // I have tried to fix it, here is just to make the code safer
-                        // https://github.com/tal-tech/flutter_intro/issues/22
-                        borderRadiusGeometry: _currentStepIndex < stepCount
-                            ? _configMap[_currentStepIndex]['borderRadius'] ??
-                                borderRadius
-                            : borderRadius,
-                        onTap: onHighlightWidgetTap != null
-                            ? () {
-                                IntroStatus introStatus = getStatus();
-                                onHighlightWidgetTap!(introStatus);
-                              }
-                            : null,
+                        width: _widgetSize.width,
+                        height: _widgetSize.height,
+                        left: _widgetOffset.dx,
+                        top: _widgetOffset.dy,
+                        borderRadiusGeometry:
+                            _currentIntroStepBuilder?.borderRadius ??
+                                borderRadius,
+                        onTap: _currentIntroStepBuilder?.onHighlightWidgetTap,
                       ),
                     ],
                   ),
                 ),
                 _DelayRenderedWidget(
                   duration: _animationDuration,
-                  child: _stepWidget,
+                  child: _overlayWidget,
                 ),
               ],
             ),
@@ -283,90 +367,31 @@ class Intro {
         );
       },
     );
-    Overlay.of(context)!.insert(_overlayEntry!);
+    Overlay.of(_context!)!.insert(_overlayEntry!);
   }
 
-  void _onNext(BuildContext context) {
-    if (_currentStepIndex + 1 < stepCount) {
-      _currentStepIndex++;
-      _renderStep(context);
-    }
+  void start() {
+    dispose();
+    _render();
   }
 
-  void _onPrev(BuildContext context) {
-    if (_currentStepIndex - 1 >= 0) {
-      _currentStepIndex--;
-      _renderStep(context);
-    }
-  }
-
-  void _onFinish() {
-    if (_overlayEntry == null) return;
-    _removed = true;
-    _overlayEntry!.markNeedsBuild();
-    Timer(_animationDuration, () {
-      if (_overlayEntry == null) return;
-      _overlayEntry!.remove();
-      _overlayEntry = null;
-    });
-  }
-
-  void _createStepWidget(BuildContext context) {
-    _getWidgetInfo(_globalKeys[_currentStepIndex]);
-    Size screenSize = MediaQuery.of(context).size;
-    Size widgetSize = Size(_widgetWidth!, _widgetHeight!);
-
-    _stepWidget = widgetBuilder(StepWidgetParams(
-      screenSize: screenSize,
-      size: widgetSize,
-      onNext: _currentStepIndex == stepCount - 1
-          ? null
-          : () {
-              _onNext(context);
-            },
-      onPrev: _currentStepIndex == 0
-          ? null
-          : () {
-              _onPrev(context);
-            },
-      offset: _widgetOffset,
-      currentStepIndex: _currentStepIndex,
-      stepCount: stepCount,
-      onFinish: _onFinish,
-    ));
-  }
-
-  void _renderStep(BuildContext context) {
-    _createStepWidget(context);
-    _overlayEntry!.markNeedsBuild();
-  }
-
-  /// Trigger the start method of the guided operation
-  ///
-  /// [context] Current environment [BuildContext]
-  void start(BuildContext context) {
-    _lastScreenSize = MediaQuery.of(context).size;
-    _removed = false;
-    _currentStepIndex = 0;
-    _createStepWidget(context);
-    _showOverlay(
-      context,
-      _globalKeys[_currentStepIndex],
+  void refresh() {
+    _render(
+      isUpdate: true,
     );
   }
 
-  /// Destroy the guide page and release all resources
+  static Intro? of(BuildContext context) {
+    _context = context;
+    return context.dependOnInheritedWidgetOfExactType<Intro>();
+  }
+
   void dispose() {
     _onFinish();
   }
 
-  /// Get intro instance current status
-  IntroStatus getStatus() {
-    bool isOpen = _overlayEntry != null;
-    IntroStatus introStatus = IntroStatus(
-      isOpen: isOpen,
-      currentStepIndex: _currentStepIndex,
-    );
-    return introStatus;
+  @override
+  bool updateShouldNotify(Intro oldWidget) {
+    return false;
   }
 }
