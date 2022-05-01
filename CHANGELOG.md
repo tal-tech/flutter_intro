@@ -1,6 +1,6 @@
-## [3.0.0-dev.2]
+## [3.0.0]
 
-* Prerelease, No documentation yet.
+* Completely rewritten, please refer to example for usage.
 
 ## [2.3.1]
 
