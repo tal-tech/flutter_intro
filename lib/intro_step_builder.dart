@@ -57,9 +57,8 @@ class _IntroStepBuilderState extends State<IntroStepBuilder> {
   void initState() {
     super.initState();
     Future.delayed(Duration.zero, () {
-      Intro? flutterIntro = Intro.of(context);
-      if (flutterIntro != null &&
-          !flutterIntro._introStepBuilderList.contains(widget)) {
+      Intro flutterIntro = Intro.of(context);
+      if (!flutterIntro._introStepBuilderList.contains(widget)) {
         flutterIntro._introStepBuilderList.add(widget);
         if (widget.onWidgetLoad != null) {
           widget.onWidgetLoad!();

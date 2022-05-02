@@ -15,10 +15,10 @@ class _AdvancedUsageState extends State<AdvancedUsage> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        Intro? intro = Intro.of(context);
+        Intro intro = Intro.of(context);
 
-        if (intro?.status.isOpen == true) {
-          intro?.dispose();
+        if (intro.status.isOpen == true) {
+          intro.dispose();
           return false;
         }
         return true;
@@ -103,7 +103,7 @@ class _AdvancedUsageState extends State<AdvancedUsage> {
                     ? IntroStepBuilder(
                         order: 3,
                         onWidgetLoad: () {
-                          Intro.of(context)?.refresh();
+                          Intro.of(context).refresh();
                         },
                         overlayBuilder: (params) {
                           return Container(
@@ -166,7 +166,7 @@ class _AdvancedUsageState extends State<AdvancedUsage> {
               Icons.play_arrow,
             ),
             onPressed: () {
-              Intro.of(context)?.start();
+              Intro.of(context).start();
             },
           ),
         ),

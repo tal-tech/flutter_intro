@@ -184,7 +184,9 @@ class Intro extends InheritedWidget {
       return;
     }
 
-    if (introStepBuilder._key.currentContext == null) {
+    BuildContext? currentContext = introStepBuilder._key.currentContext;
+
+    if (currentContext == null) {
       throw FlutterIntroException(
         'The current context is null, because there is no widget in the tree that matches this global key.'
         ' Please check whether the key in IntroStepBuilder(order: ${introStepBuilder.order}) has forgotten to bind.'
@@ -192,8 +194,7 @@ class Intro extends InheritedWidget {
       );
     }
 
-    RenderBox renderBox =
-        introStepBuilder._key.currentContext!.findRenderObject() as RenderBox;
+    RenderBox renderBox = currentContext.findRenderObject() as RenderBox;
 
     _screenSize = MediaQuery.of(_context!).size;
     _widgetSize = Size(
@@ -381,9 +382,9 @@ class Intro extends InheritedWidget {
     );
   }
 
-  static Intro? of(BuildContext context) {
+  static Intro of(BuildContext context) {
     _context = context;
-    return context.dependOnInheritedWidgetOfExactType<Intro>();
+    return context.dependOnInheritedWidgetOfExactType<Intro>()!;
   }
 
   void dispose() {

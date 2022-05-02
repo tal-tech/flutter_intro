@@ -4,7 +4,7 @@
 
 A better way for new feature introduction and step-by-step users guide for your Flutter project.
 
-## Since I no longer work at Tal, the repository has been moved to [https://github.com/minaxorg/flutter_intro](https://github.com/minaxorg/flutter_intro)
+## Since I no longer work at Tal, the repository has been moved from [https://github.com/tal-tech/flutter_intro](https://github.com/tal-tech/flutter_intro) to here.
 
 ## This is `3.0.0` version, if you find `2.x` documentation, [click here](./README_V2.md).
 
@@ -82,7 +82,7 @@ IntroStepBuilder(
 That's it!
 
 ```dart
-Intro.of(context)?.start();
+Intro.of(context).start();
 ```
 
 ## Advanced Usage
@@ -163,16 +163,14 @@ Q4. How can I manually destroy the guide page, such as the user pressing the bac
 
 A4. You can call the dispose method of the intro instance.
 
-Notice: You can call the getStatus method only above version `2.1.0`.
-
 ```dart
 WillPopScope(
   child: Scaffold(...),
   onWillPop: () async {
-    Intro? intro = Intro.of(context);
+    Intro intro = Intro.of(context);
 
-    if (intro?.status.isOpen == true) {
-      intro?.dispose();
+    if (intro.status.isOpen == true) {
+      intro.dispose();
       return false;
     }
     return true;

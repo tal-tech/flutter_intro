@@ -59,7 +59,7 @@ class _DemoUsageState extends State<DemoUsage> {
                 top: 8,
               ),
               onWidgetLoad: () {
-                Intro.of(context)?.start();
+                Intro.of(context).start();
               },
               builder: (context, key) => Icon(
                 Icons.home,

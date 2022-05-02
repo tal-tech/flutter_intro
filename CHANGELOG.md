@@ -1,3 +1,7 @@
+## [3.0.1]
+
+* Change `Intro.of(context)?.start()` to `Intro.of(context).start()`.
+
 ## [3.0.0]
 
 * Completely rewritten, please refer to example for usage.

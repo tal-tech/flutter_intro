@@ -51,16 +51,16 @@ class SimpleUsage extends StatelessWidget {
               Icons.play_arrow,
             ),
             onPressed: () {
-              Intro.of(context)?.start();
+              Intro.of(context).start();
             },
           ),
         ),
       ),
       onWillPop: () async {
-        Intro? intro = Intro.of(context);
+        Intro intro = Intro.of(context);
 
-        if (intro?.status.isOpen == true) {
-          intro?.dispose();
+        if (intro.status.isOpen == true) {
+          intro.dispose();
           return false;
         }
         return true;
