@@ -1,3 +1,7 @@
+## [3.0.2]
+
+* Migrate to `3.0.0`.
+
 ## [3.0.1]
 
 * Change `Intro.of(context)?.start()` to `Intro.of(context).start()`.
