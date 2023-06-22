@@ -50,6 +50,11 @@ class IntroStepBuilder extends StatefulWidget {
   String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
     return 'IntroStepBuilder(order: $order)';
   }
+
+  @override
+  bool operator ==(Object other) {
+    return other is IntroStepBuilder && this.order == other.order;
+  }
 }
 
 class _IntroStepBuilderState extends State<IntroStepBuilder> {
